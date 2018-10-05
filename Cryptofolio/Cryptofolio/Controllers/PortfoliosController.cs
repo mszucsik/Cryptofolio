@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Cryptofolio.Controllers
 {
+    [Authorize]
     public class PortfoliosController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -27,7 +28,7 @@ namespace Cryptofolio.Controllers
         }
 
         // GET: Portfolios/Details/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
