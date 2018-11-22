@@ -11,7 +11,7 @@
 
 </head>
 <body>
-    <nav class="navbar navbar-dark navbar-expand-md bg-dark justify-content-between">
+    <nav class="navbar navbar-dark navbar-expand-md bg-dark">
         <div class="container-fluid">
             <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand mx-auto d-block text-center order-0 order-md-1 w-25">Cryptofolio</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-nav">
@@ -34,7 +34,7 @@
         </div>
     </nav>
 
-    <partial name="_CookieConsentPartial" />
+    <!--<partial name="_CookieConsentPartial" />-->
 
 
     <div class="container body-content">
@@ -49,9 +49,9 @@
     </div>
 
 
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 
 
     @RenderSection("Scripts", required: false)

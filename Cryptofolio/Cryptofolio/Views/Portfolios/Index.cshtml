@@ -5,50 +5,29 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>View Portfolios</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rating)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Creation_Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Privacy_Status)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rating)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Creation_Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Privacy_Status)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+<div class="text-center">
+    <a asp-action="Create">Start a new portfolio</a>
+</div>
+<div class="row">
+
+    @foreach (var item in Model)
+    {
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
+                <h6 class="card-subtitle mb-2 text-muted">by @Html.DisplayFor(modelItem => item.OwnerID)</h6>
+                <div class="card-text">
+                    Rating: @Html.DisplayFor(modelItem => item.Rating)<br />
+                    Created on @Html.DisplayFor(modelItem => item.Creation_Date)
+                </div>
+                <a asp-action="Edit" asp-route-id="@item.ID" class="card-link">Make changes</a>
+                <a asp-action="Details" asp-route-id="@item.ID" class="card-link">View portfolio</a>
+            </div>
+        </div>
+    </div>
+    }
+</div>

@@ -4,66 +4,22 @@ using Cryptofolio.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Cryptofolio.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181108230927_isowner")]
+    partial class isowner
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.3-rtm-32065")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("Cryptofolio.Models.Asset", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Code");
-
-                    b.Property<double>("CurrentHigh");
-
-                    b.Property<double>("CurrentLow");
-
-                    b.Property<double>("CurrentPrice");
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("ID");
-
-                    b.ToTable("Asset");
-                });
-
-            modelBuilder.Entity("Cryptofolio.Models.Holding", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Amount");
-
-                    b.Property<int?>("AssetTypeID");
-
-                    b.Property<DateTime>("Creation_Date");
-
-                    b.Property<string>("OwnerID");
-
-                    b.Property<int?>("PortfolioID");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("AssetTypeID");
-
-                    b.HasIndex("PortfolioID");
-
-                    b.ToTable("Holding");
-                });
 
             modelBuilder.Entity("Cryptofolio.Models.Portfolio", b =>
                 {
@@ -76,7 +32,8 @@ namespace Cryptofolio.Data.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<string>("OwnerID");
+                    b.Property<string>("OwnerID")
+                        .IsRequired();
 
                     b.Property<bool>("Privacy_Status");
 
@@ -250,17 +207,6 @@ namespace Cryptofolio.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
-                });
-
-            modelBuilder.Entity("Cryptofolio.Models.Holding", b =>
-                {
-                    b.HasOne("Cryptofolio.Models.Asset", "AssetType")
-                        .WithMany()
-                        .HasForeignKey("AssetTypeID");
-
-                    b.HasOne("Cryptofolio.Models.Portfolio")
-                        .WithMany("Holdings")
-                        .HasForeignKey("PortfolioID");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

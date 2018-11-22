@@ -10,22 +10,22 @@ using Cryptofolio.Models;
 
 namespace Cryptofolio.Controllers
 {
-    public class PortfoliosController : Controller
+    public class HoldingsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public PortfoliosController(ApplicationDbContext context)
+        public HoldingsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Portfolios
+        // GET: Holdings
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Portfolio.ToListAsync());
+            return View(await _context.Holding.ToListAsync());
         }
 
-        // GET: Portfolios/Details/5
+        // GET: Holdings/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,46 +33,39 @@ namespace Cryptofolio.Controllers
                 return NotFound();
             }
 
-            var portfolio = await _context.Portfolio
+            var holding = await _context.Holding
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (portfolio == null)
+            if (holding == null)
             {
                 return NotFound();
             }
 
-            return View(portfolio);
+            return View(holding);
         }
 
-        // GET: Portfolios/Create
+        // GET: Holdings/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Portfolios/Create
+        // POST: Holdings/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,OwnerID,Name,Rating,Creation_Date,Privacy_Status")] Portfolio portfolio)
+        public async Task<IActionResult> Create([Bind("ID,OwnerID,Creation_Date,Amount")] Holding holding)
         {
-            // Setting defaults
-            var user = User.Identity.Name;
-            portfolio.OwnerID = user;
-            portfolio.Rating = 50;
-            portfolio.Creation_Date = DateTime.Now;
-
             if (ModelState.IsValid)
             {
-                _context.Add(portfolio);
-
+                _context.Add(holding);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(portfolio);
+            return View(holding);
         }
 
-        // GET: Portfolios/Edit/5
+        // GET: Holdings/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -80,22 +73,22 @@ namespace Cryptofolio.Controllers
                 return NotFound();
             }
 
-            var portfolio = await _context.Portfolio.FindAsync(id);
-            if (portfolio == null)
+            var holding = await _context.Holding.FindAsync(id);
+            if (holding == null)
             {
                 return NotFound();
             }
-            return View(portfolio);
+            return View(holding);
         }
 
-        // POST: Portfolios/Edit/5
+        // POST: Holdings/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,OwnerID,Name,Rating,Creation_Date,Privacy_Status")] Portfolio portfolio)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,OwnerID,Creation_Date,Amount")] Holding holding)
         {
-            if (id != portfolio.ID)
+            if (id != holding.ID)
             {
                 return NotFound();
             }
@@ -104,12 +97,12 @@ namespace Cryptofolio.Controllers
             {
                 try
                 {
-                    _context.Update(portfolio);
+                    _context.Update(holding);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PortfolioExists(portfolio.ID))
+                    if (!HoldingExists(holding.ID))
                     {
                         return NotFound();
                     }
@@ -120,10 +113,10 @@ namespace Cryptofolio.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(portfolio);
+            return View(holding);
         }
 
-        // GET: Portfolios/Delete/5
+        // GET: Holdings/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -131,30 +124,30 @@ namespace Cryptofolio.Controllers
                 return NotFound();
             }
 
-            var portfolio = await _context.Portfolio
+            var holding = await _context.Holding
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (portfolio == null)
+            if (holding == null)
             {
                 return NotFound();
             }
 
-            return View(portfolio);
+            return View(holding);
         }
 
-        // POST: Portfolios/Delete/5
+        // POST: Holdings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var portfolio = await _context.Portfolio.FindAsync(id);
-            _context.Portfolio.Remove(portfolio);
+            var holding = await _context.Holding.FindAsync(id);
+            _context.Holding.Remove(holding);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PortfolioExists(int id)
+        private bool HoldingExists(int id)
         {
-            return _context.Portfolio.Any(e => e.ID == id);
+            return _context.Holding.Any(e => e.ID == id);
         }
     }
 }

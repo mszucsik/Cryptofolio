@@ -1,4 +1,4 @@
-﻿@model Cryptofolio.Models.Portfolio
+﻿@model Cryptofolio.Models.Holding
 
 @{
     ViewData["Title"] = "Edit";
@@ -7,7 +7,7 @@
 
 <h2>Edit</h2>
 
-<h4>Portfolio</h4>
+<h4>Holding</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -20,26 +20,14 @@
                 <span asp-validation-for="OwnerID" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Rating" class="control-label"></label>
-                <input asp-for="Rating" class="form-control" />
-                <span asp-validation-for="Rating" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Creation_Date" class="control-label"></label>
                 <input asp-for="Creation_Date" class="form-control" />
                 <span asp-validation-for="Creation_Date" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <div class="checkbox">
-                    <label>
-                        <input asp-for="Privacy_Status" /> @Html.DisplayNameFor(model => model.Privacy_Status)
-                    </label>
-                </div>
+                <label asp-for="Amount" class="control-label"></label>
+                <input asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-default" />

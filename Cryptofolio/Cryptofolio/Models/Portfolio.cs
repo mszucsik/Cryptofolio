@@ -11,15 +11,19 @@ namespace Cryptofolio.Models
         [Key]
         public int ID { get; set; }
 
+        public string OwnerID { get; set; }
+
         [Required]
         public string Name { get; set; }
 
         public int Rating { get; set; }
 
-        [Required]
         public DateTime Creation_Date { get; set; }
 
         [Required]
+        [Display(Name = "Private?", Description = "If this is unchecked other users can see your portfolio")]
         public bool Privacy_Status { get; set; }
+
+        public ICollection<Holding> Holdings { get; set; }
     }
 }

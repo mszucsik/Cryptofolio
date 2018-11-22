@@ -1,4 +1,4 @@
-﻿@model Cryptofolio.Models.Portfolio
+﻿@model Cryptofolio.Models.Holding
 
 @{
     ViewData["Title"] = "Details";
@@ -8,7 +8,7 @@
 <h2>Details</h2>
 
 <div>
-    <h4>Portfolio</h4>
+    <h4>Holding</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -18,28 +18,16 @@
             @Html.DisplayFor(model => model.OwnerID)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Rating)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Rating)
-        </dd>
-        <dt>
             @Html.DisplayNameFor(model => model.Creation_Date)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Creation_Date)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Privacy_Status)
+            @Html.DisplayNameFor(model => model.Amount)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Privacy_Status)
+            @Html.DisplayFor(model => model.Amount)
         </dd>
     </dl>
 </div>

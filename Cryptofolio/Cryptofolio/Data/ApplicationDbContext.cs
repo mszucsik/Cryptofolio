@@ -14,5 +14,7 @@ namespace Cryptofolio.Data
         {
         }
         public DbSet<Cryptofolio.Models.Portfolio> Portfolio { get; set; }
+        public DbSet<Cryptofolio.Models.Holding> Holding { get; set; }
+        public DbSet<Cryptofolio.Models.Asset> Asset { get; set; }
     }
 }
