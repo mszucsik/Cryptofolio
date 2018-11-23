@@ -29,7 +29,7 @@ namespace Cryptofolio.Models
         public DateTime Creation_Date { get; set; }
 
         [Required]
-        [Display(Name = "Private?", Description = "If this is unchecked other users can see your portfolio")]
+        [Display(Name = "Private", Description = "If this is unchecked other users can see your portfolio")]
         public bool Privacy_Status { get; set; }
 
         public ICollection<Holding> Holdings { get; set; }

@@ -164,19 +164,23 @@ namespace Cryptofolio.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,OwnerID,Name,Rating,Creation_Date,Privacy_Status")] Portfolio portfolio)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Privacy_Status")] Portfolio portfolio)
         {
             if (id != portfolio.ID)
             {
                 return NotFound();
             }
+
             if ((User.Identity.Name == portfolio.OwnerID) || User.IsInRole("Admin"))
             {
                 if (ModelState.IsValid)
                 {
+                    var newPortfolio = await _context.Portfolio.FindAsync(portfolio.ID);
+                    newPortfolio.Name = portfolio.Name;
+                    newPortfolio.Privacy_Status = portfolio.Privacy_Status;
                     try
                     {
-                        _context.Update(portfolio);
+                        _context.Update(newPortfolio);
                         await _context.SaveChangesAsync();
                     }
                     catch (DbUpdateConcurrencyException)
