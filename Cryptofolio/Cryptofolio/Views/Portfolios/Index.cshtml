@@ -5,29 +5,71 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>View Portfolios</h2>
+<div class="text-center"><h2>My Portfolios</h2></div>
 
 
-<div class="text-center">
-    <a asp-action="Create">Start a new portfolio</a>
-</div>
 <div class="row">
-
-    @foreach (var item in Model)
-    {
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
-                <h6 class="card-subtitle mb-2 text-muted">by @Html.DisplayFor(modelItem => item.OwnerID)</h6>
-                <div class="card-text">
-                    Rating: @Html.DisplayFor(modelItem => item.Rating)<br />
-                    Created on @Html.DisplayFor(modelItem => item.Creation_Date)
-                </div>
-                <a asp-action="Edit" asp-route-id="@item.ID" class="card-link">Make changes</a>
-                <a asp-action="Details" asp-route-id="@item.ID" class="card-link">View portfolio</a>
-            </div>
+    <div class="col-md-4">
+    </div>
+    <div class="col-md-4">
+        <div class="text-center">
+            <a asp-action="Create" class="btn btn-success big-link">Start a new portfolio </a>
         </div>
     </div>
+    <div class="col-md-4">
+    </div>
+    @foreach (var item in Model)
+    {
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">by @Html.DisplayFor(modelItem => item.OwnerID)</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <p class="card-text">
+                                Rating
+                                <h4>@Html.DisplayFor(modelItem => item.Rating)</h4>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="card-text">
+                                Created on
+                                <h4>@Html.DisplayFor(modelItem => item.Creation_Date)</h4>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="card-text">
+                                Total Value
+                                <h4>@Html.DisplayFor(modelItem => item.USD_Value)</h4>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="card-text">
+                                Percent Change
+                                @if (item.Percent_Change > 0)
+                                {
+                                    <h4 class="text-success">
+                                        +@item.Percent_Change%
+                                    </h4>
+                                }
+                                else
+                                {
+                                    <h4 class="text-danger">
+                                        @item.Percent_Change%
+                                    </h4>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <a asp-action="Edit" asp-route-id="@item.ID" class="card-link">Make changes</a>
+                    <a asp-action="Details" asp-route-id="@item.ID" class="card-link">View portfolio</a>
+                </div>
+            </div>
+        </div>
     }
 </div>

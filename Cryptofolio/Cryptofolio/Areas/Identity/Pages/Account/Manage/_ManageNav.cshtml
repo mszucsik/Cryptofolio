@@ -2,13 +2,26 @@
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
-<ul class="nav nav-pills nav-stacked">
-    <li class="@ManageNavPages.IndexNavClass(ViewContext)"><a asp-page="./Index">Profile</a></li>
-    <li class="@ManageNavPages.ChangePasswordNavClass(ViewContext)"><a id="change-password" asp-page="./ChangePassword">Password</a></li>
-    @if (hasExternalLogins)
-    {
-        <li class="@ManageNavPages.ExternalLoginsNavClass(ViewContext)"><a id="external-login" asp-page="./ExternalLogins">External logins</a></li>
-    }
-    <li class="@ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)"><a asp-page="./TwoFactorAuthentication">Two-factor authentication</a></li>
-    <li class="@ManageNavPages.PersonalDataNavClass(ViewContext)"><a asp-page="./PersonalData">Personal data</a></li>
-</ul>
+<div class="card">
+    <div class="card-header">
+        Portfolio Management
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item"><a asp-area="" asp-controller="Portfolios" asp-action="Index">My Portfolios</a></li>
+        <li class="list-group-item"><a asp-area="" asp-controller="Comments" asp-action="Index">Comments</a></li>
+    </ul>
+    <div class="card-header">
+        Account Settings
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item"><a asp-page="./Index">Profile</a></li>
+        <li class="list-group-item"><a id="change-password" asp-page="./ChangePassword">Password</a></li>
+        @if (hasExternalLogins)
+        {
+            <li class="list-group-item"><a id="external-login" asp-page="./ExternalLogins">External logins</a></li>
+        }
+        <li class="list-group-item"><a asp-page="./TwoFactorAuthentication">Two-factor authentication</a></li>
+        <li class="list-group-item"><a asp-page="./PersonalData">Personal data</a></li>
+    </ul>
+
+</div>

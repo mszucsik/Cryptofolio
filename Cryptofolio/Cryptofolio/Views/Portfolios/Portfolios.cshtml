@@ -1,0 +1,146 @@
+﻿@model IEnumerable<Cryptofolio.Models.Portfolio>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+
+
+@{
+    ViewData["Title"] = "Portfolios";
+}
+@{
+    var value = 1.023;
+    var change = 329.28;
+    var newest = ViewData["newest"] as Portfolio;
+    var popular = ViewData["popular"] as Portfolio;
+    var top = ViewData["top"] as Portfolio;
+}
+<div class="row">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div id="intro" class="carousel slide" data-ride="carousel">
+
+                <ul class="carousel-indicators">
+                    <li data-target="#intro" data-slide-to="0" class="active"></li>
+                    <li data-target="#intro" data-slide-to="1"></li>
+                    <li data-target="#intro" data-slide-to="2"></li>
+                </ul>
+
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <a asp-action="Details" asp-route-id="@newest.ID" class="card-link">
+                            <img class="img-fluid" src="~/images/new.jpg" alt="Newest">
+                            <div class="carousel-caption">
+                                <h6>Newest Portfolio</h6>
+                                <h3>@newest.Name</h3>
+                                <p>@newest.OwnerID</p>
+                                <h2>@newest.Creation_Date</h2>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="carousel-item">
+                        <a asp-action="Details" asp-route-id="@popular.ID" class="card-link">
+                            <img class="img-fluid" src="~/images/popular.jpg" alt="Most Popular">
+                            <div class="carousel-caption">
+                                <h6>Most Popular</h6>
+                                <h3>@popular.Name</h3>
+                                <p>@popular.OwnerID</p>
+                                <h2>@popular.Rating / 100</h2>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="carousel-item">
+                        <a asp-action="Details" asp-route-id="@top.ID" class="card-link">
+                            <img class="img-fluid" src="~/images/best.jpg" alt="Biggest Gain">
+                            <div class="carousel-caption">
+                                <h6>Most Profitable</h6>
+                                <h3>@top.Name</h3>
+                                <p>@top.OwnerID</p>
+                                @if (top.Percent_Change > 0)
+                                {
+                                <h2 class="text-success">+@top.Percent_Change%</h2>
+                            } else {
+                                <h2 class="text-danger">@top.Percent_Change%</h2>
+                            }
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <a class="carousel-control-prev" href="#intro" data-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </a>
+                <a class="carousel-control-next" href="#intro" data-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </a>
+
+            </div>
+            <div class="card-body">
+                <p class="card-text">Now something else entirely</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+    </div>
+
+
+
+    @foreach (var item in Model)
+    {
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header text-center">
+                <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
+                <h6 class="card-subtitle mb-2 text-muted">by @Html.DisplayFor(modelItem => item.OwnerID)</h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <p class="card-text">
+                            Rating
+                            <h4>@Html.DisplayFor(modelItem => item.Rating)</h4>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="card-text">
+                            Created on
+                            <h4>@Html.DisplayFor(modelItem => item.Creation_Date)</h4>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="card-text">
+                            Total Value
+                            <h4>@Html.DisplayFor(modelItem => item.USD_Value)</h4>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="card-text">
+                            Percent Change
+                            @if (item.Percent_Change > 0)
+                                {
+                            <h4 class="text-success">
+                                +@item.Percent_Change%
+                            </h4>
+                                }
+                                else
+                                {
+                            <h4 class="text-danger">
+                                @item.Percent_Change%
+                            </h4>
+                                }
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                @if ((@UserManager.GetUserName(User) == item.OwnerID) || (User.IsInRole("Admin")))
+                {
+                <a asp-action="Edit" asp-route-id="@item.ID" class="card-link">Make changes</a>
+                }
+                <a asp-action="Details" asp-route-id="@item.ID" class="card-link">View portfolio</a>
+            </div>
+        </div>
+    </div>
+   }
+</div>

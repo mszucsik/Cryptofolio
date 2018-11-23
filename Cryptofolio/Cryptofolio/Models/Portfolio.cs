@@ -18,6 +18,13 @@ namespace Cryptofolio.Models
 
         public int Rating { get; set; }
 
+        public virtual double Percent_Change { get; set; }
+
+        public virtual double BTC_Value { get; set; }
+
+        public virtual double USD_Value { get; set; }
+
+        [DataType(DataType.Date)]
         public DateTime Creation_Date { get; set; }
 
         [Required]

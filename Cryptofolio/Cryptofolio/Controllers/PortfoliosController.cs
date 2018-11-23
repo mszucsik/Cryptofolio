@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Cryptofolio.Data;
 using Cryptofolio.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cryptofolio.Controllers
 {
@@ -19,13 +20,66 @@ namespace Cryptofolio.Controllers
             _context = context;
         }
 
+        // GET: Public Portfolios
+        [AllowAnonymous]
+        public async Task<IActionResult> Portfolios()
+        {
+            List<Portfolio> portfolios = await _context.Portfolio.ToListAsync();
+            List<Portfolio> displayPortfolios = new List<Portfolio>();
+            Portfolio newestPortfolio = new Portfolio();
+            Portfolio mostPopular = new Portfolio();
+            Portfolio topPortfolio = new Portfolio();
+            foreach (Portfolio portfolio in portfolios)
+            {
+                if (portfolio.Privacy_Status == false)
+                {
+                    // TODO: Calculate percent change
+                    portfolio.Percent_Change = 23.32;
+
+
+                    displayPortfolios.Add(portfolio);
+                    if (portfolio.Creation_Date > newestPortfolio.Creation_Date)
+                    {
+                        newestPortfolio = portfolio;
+                    }
+                    if (portfolio.Rating > mostPopular.Rating)
+                    {
+                        mostPopular = portfolio;
+                    }
+                    if (portfolio.Percent_Change > topPortfolio.Percent_Change)
+                    {
+                        topPortfolio = portfolio;
+                    }
+                }
+            }
+
+            ViewData["newest"] = newestPortfolio;
+            ViewData["popular"] = mostPopular;
+            ViewData["top"] = topPortfolio;
+
+            return View(displayPortfolios);
+        }
+
         // GET: Portfolios
+        [Authorize]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Portfolio.ToListAsync());
+            List<Portfolio> portfolios = await _context.Portfolio.ToListAsync();
+            List<Portfolio> displayPortfolios = new List<Portfolio>();
+            foreach (Portfolio portfolio in portfolios)
+            {
+                if (User.Identity.Name == portfolio.OwnerID)
+                {
+                    displayPortfolios.Add(portfolio);
+                }
+
+
+            }
+            return View(displayPortfolios);
         }
 
         // GET: Portfolios/Details/5
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -39,11 +93,17 @@ namespace Cryptofolio.Controllers
             {
                 return NotFound();
             }
-
-            return View(portfolio);
+            if (portfolio.Privacy_Status == false)
+            {
+                return View(portfolio);
+            } else
+            {
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // GET: Portfolios/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -54,6 +114,7 @@ namespace Cryptofolio.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("ID,OwnerID,Name,Rating,Creation_Date,Privacy_Status")] Portfolio portfolio)
         {
             // Setting defaults
@@ -73,6 +134,7 @@ namespace Cryptofolio.Controllers
         }
 
         // GET: Portfolios/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -85,7 +147,15 @@ namespace Cryptofolio.Controllers
             {
                 return NotFound();
             }
-            return View(portfolio);
+
+            if (User.Identity.Name == portfolio.OwnerID)
+            {
+                return View(portfolio);
+            }
+            else
+            {
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: Portfolios/Edit/5
@@ -93,37 +163,44 @@ namespace Cryptofolio.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("ID,OwnerID,Name,Rating,Creation_Date,Privacy_Status")] Portfolio portfolio)
         {
             if (id != portfolio.ID)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            if (User.Identity.Name == portfolio.OwnerID)
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(portfolio);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PortfolioExists(portfolio.ID))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(portfolio);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!PortfolioExists(portfolio.ID))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
+                return View(portfolio);
+            } else
+            {
                 return RedirectToAction(nameof(Index));
             }
-            return View(portfolio);
         }
 
         // GET: Portfolios/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -138,18 +215,32 @@ namespace Cryptofolio.Controllers
                 return NotFound();
             }
 
-            return View(portfolio);
+            if (User.Identity.Name == portfolio.OwnerID)
+            {
+                return View(portfolio);
+            }
+            else
+            {
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // POST: Portfolios/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var portfolio = await _context.Portfolio.FindAsync(id);
-            _context.Portfolio.Remove(portfolio);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (User.Identity.Name == portfolio.OwnerID)
+            {
+                _context.Portfolio.Remove(portfolio);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            } else
+            {
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         private bool PortfolioExists(int id)

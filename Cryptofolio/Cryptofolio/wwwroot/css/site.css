@@ -1,5 +1,10 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
 for details on configuring this project to bundle and minify static web assets. */
+@import url('https://fonts.googleapis.com/css?family=Lora|Poppins');
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
 .card {
     margin-top: 10px;
 }
@@ -15,11 +20,31 @@ h6, h7 {
     margin-bottom: 3px;
 }
 
+.big-link {
+    margin: 30px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    width: 250px;
+}
+.carousel img {
+    filter: blur(1px);
+    filter: brightness(70%);
+}
+
+.btn-front {
+    width: 200px;
+}
+.title {
+    font-size: 60px;
+    font-family: 'Lora', serif;
+    padding: 20px;
+}
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
+    margin-bottom: 20px;
 }
 
 /* Carousel */

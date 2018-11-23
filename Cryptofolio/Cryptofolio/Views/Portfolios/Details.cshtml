@@ -1,49 +1,84 @@
 ﻿@model Cryptofolio.Models.Portfolio
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<h2>Details</h2>
-
-<div>
-    <h4>Portfolio</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.OwnerID)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.OwnerID)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Rating)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Rating)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Creation_Date)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Creation_Date)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Privacy_Status)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Privacy_Status)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header text-center">
+                <h3>@Html.DisplayFor(model => model.Name)</h3>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <p class="card-text">
+                            Created by
+                            <h4>@Html.DisplayFor(model => model.OwnerID)</h4>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="card-text">
+                            Rating
+                            <h4>@Html.DisplayFor(model => model.Rating)</h4>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="card-text">
+                            Created on
+                            <h4>@Html.DisplayFor(model => model.Creation_Date)</h4>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="card-text">
+                            Total Value (BTC)
+                            <h4>@Html.DisplayFor(model => model.BTC_Value)</h4>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="card-text">
+                            Total Value (USD)
+                            <h4>@Html.DisplayFor(model => model.USD_Value)</h4>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="card-text">
+                            Percent Change
+                            @if (Model.Percent_Change > 0)
+                            {
+                                <h4 class="text-success">
+                                    +@Model.Percent_Change%
+                                </h4>
+                            }
+                            else
+                            {
+                                <h4 class="text-danger">
+                                    @Model.Percent_Change%
+                                </h4>
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Holding #1 goes here</li>
+                <li class="list-group-item">Holding #2 goes here</li>
+                <li class="list-group-item">Holding #3 goes here</li>
+            </ul>
+            <div class="card-body">
+                @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.ID" class="card-link">Make changes</a>
+                    <a asp-action="Index" class="card-link">Back to portfolio list</a>
+                }
+                else
+                {
+                    <a asp-action="Portfolios" class="card-link">Back to portfolio list</a>
+                }
+            </div>
+        </div>
+    </div>
 </div>
