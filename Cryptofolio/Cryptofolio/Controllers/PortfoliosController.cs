@@ -67,8 +67,8 @@ namespace Cryptofolio.Controllers
             List<Portfolio> portfolios = await _context.Portfolio.ToListAsync();
             List<Portfolio> displayPortfolios = new List<Portfolio>();
             foreach (Portfolio portfolio in portfolios)
-            {
-                if (User.Identity.Name == portfolio.OwnerID)
+            { 
+                if ((User.Identity.Name == portfolio.OwnerID) || User.IsInRole("Admin"))
                 {
                     displayPortfolios.Add(portfolio);
                 }
@@ -148,7 +148,7 @@ namespace Cryptofolio.Controllers
                 return NotFound();
             }
 
-            if (User.Identity.Name == portfolio.OwnerID)
+            if ((User.Identity.Name == portfolio.OwnerID) || User.IsInRole("Admin"))
             {
                 return View(portfolio);
             }
@@ -170,7 +170,7 @@ namespace Cryptofolio.Controllers
             {
                 return NotFound();
             }
-            if (User.Identity.Name == portfolio.OwnerID)
+            if ((User.Identity.Name == portfolio.OwnerID) || User.IsInRole("Admin"))
             {
                 if (ModelState.IsValid)
                 {
@@ -215,7 +215,7 @@ namespace Cryptofolio.Controllers
                 return NotFound();
             }
 
-            if (User.Identity.Name == portfolio.OwnerID)
+            if ((User.Identity.Name == portfolio.OwnerID) || User.IsInRole("Admin"))
             {
                 return View(portfolio);
             }
@@ -232,7 +232,7 @@ namespace Cryptofolio.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var portfolio = await _context.Portfolio.FindAsync(id);
-            if (User.Identity.Name == portfolio.OwnerID)
+            if ((User.Identity.Name == portfolio.OwnerID) || User.IsInRole("Admin"))
             {
                 _context.Portfolio.Remove(portfolio);
                 await _context.SaveChangesAsync();

@@ -14,6 +14,7 @@ namespace Cryptofolio.Models
         public string OwnerID { get; set; }
 
         [Required]
+        [Display(Name = "Portfolio Name")]
         public string Name { get; set; }
 
         public int Rating { get; set; }

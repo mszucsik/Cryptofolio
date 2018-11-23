@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Cryptofolio.Models
 {
-    public class Holding
+    public class Comment
     {
         [Key]
         public int ID { get; set; }
@@ -17,9 +17,7 @@ namespace Cryptofolio.Models
 
         public DateTime Creation_Date { get; set; }
 
-        public Asset AssetType { get; set; }
-
-        public double Amount { get; set; }
+        public string Message { get; set; }
     }
 
 }

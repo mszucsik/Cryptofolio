@@ -25,30 +25,6 @@ namespace Cryptofolio.Controllers
             return View(await _context.Holding.ToListAsync());
         }
 
-        // GET: Holdings/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var holding = await _context.Holding
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (holding == null)
-            {
-                return NotFound();
-            }
-
-            return View(holding);
-        }
-
-        // GET: Holdings/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
         // POST: Holdings/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.

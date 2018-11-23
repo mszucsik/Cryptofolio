@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Cryptofolio.Models
 {
-    public class Holding
+    public class Rating
     {
         [Key]
         public int ID { get; set; }
@@ -17,9 +17,15 @@ namespace Cryptofolio.Models
 
         public DateTime Creation_Date { get; set; }
 
-        public Asset AssetType { get; set; }
+        [EnumDataType(typeof(RatingType))]
+        public RatingType Vote { get; set; }
+    }
 
-        public double Amount { get; set; }
+    public enum RatingType
+    {
+        Down = -1,
+        None = 0,
+        Up = 1
     }
 
 }
