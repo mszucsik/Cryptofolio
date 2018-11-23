@@ -3,8 +3,11 @@
 @inject UserManager<IdentityUser> UserManager
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.Name;
     Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var assets = ViewData["assets"] as List<Asset>;
 }
 <div class="row">
     <div class="col-md-12">
@@ -63,10 +66,68 @@
                     </div>
                 </div>
             </div>
+            <div class="card-footer text-center">
+                <h4>Holdings</h4>
+            </div>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item">Holding #1 goes here</li>
-                <li class="list-group-item">Holding #2 goes here</li>
-                <li class="list-group-item">Holding #3 goes here</li>
+                @foreach (var item in Model.Holdings)
+                {
+                    Asset assetContext = new Asset();
+                    @foreach (var asset in assets)
+                    {
+                        if (@item.AssetType == asset.Code)
+                        {
+                            assetContext = asset;
+                        }
+                    }
+
+                    
+                    var overall = (assetContext.CurrentPrice - item.PurchasePrice) / item.PurchasePrice * 100;
+                    var dailychange = 0.00;
+
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-md-3">
+                                Asset Type
+                                <h5>@item.AssetType</h5>
+                            </div>
+                            <div class="col-md-3">
+                                Amount
+                                <h5>@item.Amount</h5>
+                            </div>
+                            <div class="col-md-3">
+                                Current Price
+                                <h5>$@assetContext.CurrentPrice.ToString("0.00")</h5>
+                            </div>
+                            <div class="col-md-3">
+                                Purchase Price
+                                <h5>$@item.PurchasePrice.ToString("0.00")</h5>
+                            </div>
+                            <div class="col-md-3">
+                                24 Hour Change
+                                @if (dailychange > 0)
+                                {
+                                    <h5 class="text-success">+@dailychange.ToString("0.00")%</h5>
+                                }
+                                else
+                                {
+                                    <h5 class="text-danger">@dailychange.ToString("0.00")%</h5>
+                                }
+                            </div>
+                            <div class="col-md-3">
+                                Overall Change
+                                @if (overall > 0)
+                                {
+                                    <h5 class="text-success">+@overall.ToString("0.00")%</h5>
+                                }
+                                else
+                                {
+                                    <h5 class="text-danger">@overall.ToString("0.00")%</h5>
+                                }
+                            </div>
+                        </div>
+                    </li>
+                }
             </ul>
             <div class="card-body">
                 @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
@@ -81,5 +142,5 @@
                 }
             </div>
         </div>
+        </div>
     </div>
-</div>

@@ -1,7 +1,7 @@
 ﻿@model Cryptofolio.Models.Portfolio
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit " + Model.Name;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -40,8 +40,8 @@
                 </form>
             </div>
             <div class="card-body">
-                <a asp-action="Delete" asp-route-id="@Model.ID" class="card-link">Delete this portfolio</a>
                 <a asp-action="Index" class="card-link">Back to portfolio list</a>
+                <a asp-action="Delete" asp-route-id="@Model.ID" class="card-link">Delete this portfolio</a>
             </div>
         </div>
     </div>

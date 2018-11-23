@@ -54,10 +54,14 @@ namespace Cryptofolio.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Code,CurrentPrice,CurrentHigh,CurrentLow")] Asset asset)
+        public async Task<IActionResult> Create([Bind("ID,Name")] Asset asset)
         {
             if (ModelState.IsValid)
             {
+                asset.CurrentHigh = 6503.32;
+                asset.CurrentLow = 6303.18;
+                asset.CurrentPrice = (asset.CurrentLow + asset.CurrentHigh) / 2;
+
                 _context.Add(asset);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

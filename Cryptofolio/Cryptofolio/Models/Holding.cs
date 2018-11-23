@@ -17,9 +17,15 @@ namespace Cryptofolio.Models
 
         public DateTime Creation_Date { get; set; }
 
-        public Asset AssetType { get; set; }
+        [Required]
+        public string AssetType { get; set; }
 
+        [Required]
         public double Amount { get; set; }
+
+        [Required]
+        [Display(Name = "Purchase Price")]
+        public double PurchasePrice { get; set; }
     }
 
 }

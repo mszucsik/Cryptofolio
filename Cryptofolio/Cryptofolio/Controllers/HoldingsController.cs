@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Cryptofolio.Data;
 using Cryptofolio.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace Cryptofolio.Controllers
 {
@@ -25,18 +26,33 @@ namespace Cryptofolio.Controllers
             return View(await _context.Holding.ToListAsync());
         }
 
+        public async Task<IActionResult> Create()
+        {
+            ViewData["assets"] = await _context.Asset.ToListAsync();
+            return View();
+        }
+
         // POST: Holdings/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,OwnerID,Creation_Date,Amount")] Holding holding)
+        public async Task<IActionResult> Create([Bind("ID,OwnerID,AssetType,PurchasePrice,Creation_Date,Amount")] Holding holding, IFormCollection form)
         {
-            if (ModelState.IsValid)
+
+            if (form["AssetType"] != "Select Asset")
             {
-                _context.Add(holding);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var user = User.Identity.Name;
+                holding.AssetType = form["AssetType"];
+                holding.OwnerID = user;
+                holding.Creation_Date = DateTime.Now;
+
+                if (ModelState.IsValid)
+                {
+                    _context.Add(holding);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View(holding);
         }

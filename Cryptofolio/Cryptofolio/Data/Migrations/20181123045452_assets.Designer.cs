@@ -4,14 +4,16 @@ using Cryptofolio.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Cryptofolio.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181123045452_assets")]
+    partial class assets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,8 +50,7 @@ namespace Cryptofolio.Data.Migrations
 
                     b.Property<double>("Amount");
 
-                    b.Property<string>("AssetType")
-                        .IsRequired();
+                    b.Property<int?>("AssetTypeID");
 
                     b.Property<DateTime>("Creation_Date");
 
@@ -59,9 +60,9 @@ namespace Cryptofolio.Data.Migrations
 
                     b.Property<int>("Portfolio_ID");
 
-                    b.Property<double>("PurchasePrice");
-
                     b.HasKey("ID");
+
+                    b.HasIndex("AssetTypeID");
 
                     b.HasIndex("PortfolioID");
 
@@ -263,6 +264,10 @@ namespace Cryptofolio.Data.Migrations
 
             modelBuilder.Entity("Cryptofolio.Models.Holding", b =>
                 {
+                    b.HasOne("Cryptofolio.Models.Asset", "AssetType")
+                        .WithMany()
+                        .HasForeignKey("AssetTypeID");
+
                     b.HasOne("Cryptofolio.Models.Portfolio")
                         .WithMany("Holdings")
                         .HasForeignKey("PortfolioID");

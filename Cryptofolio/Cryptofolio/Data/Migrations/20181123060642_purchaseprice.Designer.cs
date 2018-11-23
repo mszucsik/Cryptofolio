@@ -4,14 +4,16 @@ using Cryptofolio.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Cryptofolio.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181123060642_purchaseprice")]
+    partial class purchaseprice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,8 +50,7 @@ namespace Cryptofolio.Data.Migrations
 
                     b.Property<double>("Amount");
 
-                    b.Property<string>("AssetType")
-                        .IsRequired();
+                    b.Property<string>("AssetType");
 
                     b.Property<DateTime>("Creation_Date");
 

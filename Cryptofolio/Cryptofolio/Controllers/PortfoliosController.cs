@@ -95,6 +95,9 @@ namespace Cryptofolio.Controllers
             }
             if (portfolio.Privacy_Status == false)
             {
+                ViewData["assets"] = await _context.Asset.ToListAsync();
+                List<Holding> holdings = await _context.Holding.ToListAsync();
+                portfolio.Holdings = holdings;
                 return View(portfolio);
             } else
             {

@@ -5,13 +5,11 @@
 
 @{
     ViewData["Title"] = "Cryptofolio";
+    var count = ViewBag.count;
+    var total = ViewBag.total;
+    var daychange = ViewBag.daychange;
 }
 
-@{
-    var count = 133;
-    var total = 29328.17;
-    var daychange = -439.42;
-}
 
 <div class="text-center"><h1 class="title">Cryptofolio</h1></div>
 <div class="card">
@@ -27,21 +25,21 @@
                 <p class="card-text">
                     Total Value of All Portfolios
                     <h1>$@total</h1>
-                </p>
+               </p>
             </div>
             <div class="col-md-4">
                 <p class="card-text">
                     24 Hour Change
-                    @if (daychange > 0)
+                    @if (@daychange > 0)
                     {
                         <h1 class="text-success">
-                            +@daychange
+                            +@daychange%
                         </h1>
                     }
                     else
                     {
                         <h1 class="text-danger">
-                            @daychange
+                            @daychange%
                         </h1>
                     }
 </div>
