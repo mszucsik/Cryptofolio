@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var id = ViewData["id"];
 }
 
 <h2>Edit</h2>
@@ -37,7 +39,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Details" asp-route-id="@id">Back to the Portfolio</a>
 </div>
 
 @section Scripts {

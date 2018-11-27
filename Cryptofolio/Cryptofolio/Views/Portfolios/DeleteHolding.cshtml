@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Delete";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var id = ViewData["id"];
 }
 
 <h2>Delete</h2>
@@ -31,10 +33,10 @@
             @Html.DisplayFor(model => model.Amount)
         </dd>
     </dl>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="ID" />
         <input type="submit" value="Delete" class="btn btn-default" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Details" asp-route-id="@id">Back to the Portfolio</a>
     </form>
 </div>

@@ -1,0 +1,49 @@
+﻿@model Cryptofolio.Models.MarketPrice
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>MarketPrice</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CurrentPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CurrentPrice)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TimeStamp)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TimeStamp)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LogoUrl)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LogoUrl)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.MarketCurrency)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.MarketCurrency)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.MarketCurrencyLong)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.MarketCurrencyLong)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

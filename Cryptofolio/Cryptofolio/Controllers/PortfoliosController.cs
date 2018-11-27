@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Cryptofolio.Data;
 using Cryptofolio.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace Cryptofolio.Controllers
 {
@@ -67,7 +68,7 @@ namespace Cryptofolio.Controllers
             List<Portfolio> portfolios = await _context.Portfolio.ToListAsync();
             List<Portfolio> displayPortfolios = new List<Portfolio>();
             foreach (Portfolio portfolio in portfolios)
-            { 
+            {
                 if ((User.Identity.Name == portfolio.OwnerID) || User.IsInRole("Admin"))
                 {
                     displayPortfolios.Add(portfolio);
@@ -97,9 +98,21 @@ namespace Cryptofolio.Controllers
             {
                 ViewData["assets"] = await _context.Asset.ToListAsync();
                 List<Holding> holdings = await _context.Holding.ToListAsync();
-                portfolio.Holdings = holdings;
+                List<Holding> displayHoldings = new List<Holding>();
+                foreach (Holding holding in holdings)
+                {
+                    if (holding.Portfolio_ID == id)
+                    {
+                        displayHoldings.Add(holding);
+                    }
+
+
+                }
+
+                portfolio.Holdings = displayHoldings;
                 return View(portfolio);
-            } else
+            }
+            else
             {
                 return RedirectToAction(nameof(Index));
             }
@@ -200,7 +213,8 @@ namespace Cryptofolio.Controllers
                     return RedirectToAction(nameof(Index));
                 }
                 return View(portfolio);
-            } else
+            }
+            else
             {
                 return RedirectToAction(nameof(Index));
             }
@@ -244,7 +258,8 @@ namespace Cryptofolio.Controllers
                 _context.Portfolio.Remove(portfolio);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            } else
+            }
+            else
             {
                 return RedirectToAction(nameof(Index));
             }
@@ -253,6 +268,160 @@ namespace Cryptofolio.Controllers
         private bool PortfolioExists(int id)
         {
             return _context.Portfolio.Any(e => e.ID == id);
+        }
+
+
+        public async Task<IActionResult> AddHolding(int id)
+        {
+            var portfolio = await _context.Portfolio.FindAsync(id);
+            if ((User.Identity.Name == portfolio.OwnerID) || User.IsInRole("Admin"))
+            {
+
+                List<MarketPrice> marketRate = await _context.MarketPrice.ToListAsync();
+                List<MarketPrice> currentPrices = new List<MarketPrice>();
+                foreach (MarketPrice m in marketRate)
+                {
+                    if (m.TimeStamp > DateTime.Now.AddHours(-24))
+                    {
+                        currentPrices.Add(m);
+                    }
+                }
+                ViewData["id"] = id;
+                ViewData["assets"] = currentPrices;
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Details", new { id = id });
+            }
+        }
+
+        // POST: Holdings/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddHolding([Bind("OwnerID,AssetType,PurchasePrice,Creation_Date,Amount")] Holding holding, IFormCollection form)
+        {
+
+            var portfolioId = Convert.ToInt32(form["Portfolio_ID"]);
+
+            var portfolio = await _context.Portfolio.FindAsync(portfolioId);
+            if ((User.Identity.Name == portfolio.OwnerID) || User.IsInRole("Admin"))
+            {
+                if (form["AssetType"] != "Select Asset")
+                {
+
+
+                    var user = User.Identity.Name;
+                    holding.AssetType = form["AssetType"];
+                    holding.Portfolio_ID = portfolioId;
+                    holding.OwnerID = user;
+                    holding.Creation_Date = DateTime.Now;
+
+                    if (ModelState.IsValid)
+                    {
+                        _context.Add(holding);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction("Details", new { id = portfolioId });
+                    }
+                }
+                return View(holding);
+            }
+            else
+            {
+                return RedirectToAction("Details", new { id = portfolioId });
+            }
+
+        }
+
+        // GET: Holdings/Edit/5
+        public async Task<IActionResult> EditHolding(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var holding = await _context.Holding.FindAsync(id);
+            if (holding == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["id"] = id;
+            return View(holding);
+        }
+
+        // POST: Holdings/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditHolding(int id, [Bind("ID,OwnerID,Creation_Date,Amount")] Holding holding)
+        {
+            if (id != holding.ID)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(holding);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!HoldingExists(holding.ID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(holding);
+        }
+
+        // GET: Holdings/Delete/5
+        public async Task<IActionResult> DeleteHolding(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var holding = await _context.Holding
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (holding == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["id"] = id;
+
+            return View(holding);
+        }
+
+        // POST: Holdings/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteHoldingConfirmed(int id)
+        {
+            var holding = await _context.Holding.FindAsync(id);
+            _context.Holding.Remove(holding);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool HoldingExists(int id)
+        {
+            return _context.Holding.Any(e => e.ID == id);
         }
     }
 }

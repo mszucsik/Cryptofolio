@@ -19,10 +19,13 @@ namespace Cryptofolio.Models
 
         public int Rating { get; set; }
 
+        [Display(Name = "Percent Change")]
         public virtual double Percent_Change { get; set; }
 
+        [Display(Name = "BTC Value")]
         public virtual double BTC_Value { get; set; }
 
+        [Display(Name = "USD Value")]
         public virtual double USD_Value { get; set; }
 
         [DataType(DataType.Date)]

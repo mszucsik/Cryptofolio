@@ -7,66 +7,67 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Cryptofolio.Data;
 using Cryptofolio.Models;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cryptofolio.Controllers
 {
-    public class HoldingsController : Controller
+    [Authorize(Roles = "Admin")]
+    public class MarketPricesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public HoldingsController(ApplicationDbContext context)
+        public MarketPricesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Holdings
+        // GET: MarketPrices
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Holding.ToListAsync());
+            return View(await _context.MarketPrice.ToListAsync());
         }
 
-        public async Task<IActionResult> Create()
+        // GET: MarketPrices/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
-            List<MarketPrice> marketRate = await _context.MarketPrice.ToListAsync();
-            List<MarketPrice> currentPrices = new List<MarketPrice>();
-            foreach(MarketPrice m in marketRate)
+            if (id == null)
             {
-                if (m.TimeStamp > DateTime.Now.AddHours(-3))
-                {
-                    currentPrices.Add(m);
-                }
+                return NotFound();
             }
-            ViewData["assets"] = currentPrices;
+
+            var marketPrice = await _context.MarketPrice
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (marketPrice == null)
+            {
+                return NotFound();
+            }
+
+            return View(marketPrice);
+        }
+
+        // GET: MarketPrices/Create
+        public IActionResult Create()
+        {
             return View();
         }
 
-        // POST: Holdings/Create
+        // POST: MarketPrices/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,OwnerID,AssetType,PurchasePrice,Creation_Date,Amount")] Holding holding, IFormCollection form)
+        public async Task<IActionResult> Create([Bind("ID,CurrentPrice,TimeStamp,LogoUrl,MarketCurrency,MarketCurrencyLong")] MarketPrice marketPrice)
         {
-
-            if (form["AssetType"] != "Select Asset")
+            if (ModelState.IsValid)
             {
-                var user = User.Identity.Name;
-                holding.AssetType = form["AssetType"];
-                holding.OwnerID = user;
-                holding.Creation_Date = DateTime.Now;
-
-                if (ModelState.IsValid)
-                {
-                    _context.Add(holding);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
+                _context.Add(marketPrice);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            return View(holding);
+            return View(marketPrice);
         }
 
-        // GET: Holdings/Edit/5
+        // GET: MarketPrices/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -74,22 +75,22 @@ namespace Cryptofolio.Controllers
                 return NotFound();
             }
 
-            var holding = await _context.Holding.FindAsync(id);
-            if (holding == null)
+            var marketPrice = await _context.MarketPrice.FindAsync(id);
+            if (marketPrice == null)
             {
                 return NotFound();
             }
-            return View(holding);
+            return View(marketPrice);
         }
 
-        // POST: Holdings/Edit/5
+        // POST: MarketPrices/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,OwnerID,Creation_Date,Amount")] Holding holding)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,CurrentPrice,TimeStamp,LogoUrl,MarketCurrency,MarketCurrencyLong")] MarketPrice marketPrice)
         {
-            if (id != holding.ID)
+            if (id != marketPrice.ID)
             {
                 return NotFound();
             }
@@ -98,12 +99,12 @@ namespace Cryptofolio.Controllers
             {
                 try
                 {
-                    _context.Update(holding);
+                    _context.Update(marketPrice);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!HoldingExists(holding.ID))
+                    if (!MarketPriceExists(marketPrice.ID))
                     {
                         return NotFound();
                     }
@@ -114,10 +115,10 @@ namespace Cryptofolio.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(holding);
+            return View(marketPrice);
         }
 
-        // GET: Holdings/Delete/5
+        // GET: MarketPrices/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -125,30 +126,30 @@ namespace Cryptofolio.Controllers
                 return NotFound();
             }
 
-            var holding = await _context.Holding
+            var marketPrice = await _context.MarketPrice
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (holding == null)
+            if (marketPrice == null)
             {
                 return NotFound();
             }
 
-            return View(holding);
+            return View(marketPrice);
         }
 
-        // POST: Holdings/Delete/5
+        // POST: MarketPrices/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var holding = await _context.Holding.FindAsync(id);
-            _context.Holding.Remove(holding);
+            var marketPrice = await _context.MarketPrice.FindAsync(id);
+            _context.MarketPrice.Remove(marketPrice);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool HoldingExists(int id)
+        private bool MarketPriceExists(int id)
         {
-            return _context.Holding.Any(e => e.ID == id);
+            return _context.MarketPrice.Any(e => e.ID == id);
         }
     }
 }

@@ -1,0 +1,91 @@
+﻿@model Cryptofolio.Models.Holding
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    var assets = ViewData["assets"] as List<MarketPrice>;
+    var id = ViewData["id"];
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header text-center">
+                <h3>Add a holding</h3>
+            </div>
+            <div class="card-body">
+                <form asp-action="AddHolding">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input asp-for="Portfolio_ID" class="form-control" hidden value="@id"/>
+                            <div class="form-group">
+                                <label asp-for="Amount" class="control-label"></label>
+                                <input asp-for="Amount" class="form-control" />
+                                <span asp-validation-for="Amount" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="AssetType" class="control-label"></label><br />
+                                @{
+                                    List<SelectListItem> listItems = new List<SelectListItem>();
+                                    @foreach (var item in assets)
+                                    {
+                                        listItems.Add(new SelectListItem { Text = item.MarketCurrencyLong, Value = item.MarketCurrency });
+                                    }
+                                }
+                                @Html.DropDownListFor(model => model.AssetType, listItems, "Select Asset", htmlAttributes: new { @class = "form-control", AssetType = "AssetType", @onchange = "updatePriceDisplay(value);" })
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="PurchasePrice" class="control-label"></label>
+                                <input asp-for="PurchasePrice" class="form-control" />
+                                <span asp-validation-for="PurchasePrice" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6" id="assetdetails" style="display:none">
+                            @foreach (var item in assets)
+                            {
+
+                                <div id="@item.MarketCurrency" class="card">
+                                    <div class="card-body text-center">
+                                        <h5>$@item.CurrentPrice USD/@item.MarketCurrency</h5>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <input type="submit" value="Create" class="btn btn-default" />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="card-body">
+                <a asp-action="Details" asp-route-id="@id" class="card-link">Back to portfolio</a>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+<script type="text/javascript">
+
+    function updatePriceDisplay(value) {
+        $('#assetdetails').each(function () {
+            $(this).hide();
+        });
+        if (value !== "") {
+            $('#assetdetails').show();
+            $('#' + value).show();
+        }
+    }
+</script>

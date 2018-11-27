@@ -27,8 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DataTables.AspNet.Core" Version="2.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.4" PrivateAssets="All" />
+    <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.10" />
+    <PackageReference Include="System.Json" Version="4.4.0" />
   </ItemGroup>
 
   <ItemGroup>

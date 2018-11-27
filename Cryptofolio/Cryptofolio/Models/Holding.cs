@@ -18,6 +18,7 @@ namespace Cryptofolio.Models
         public DateTime Creation_Date { get; set; }
 
         [Required]
+        [Display(Name = "Asset Type")]
         public string AssetType { get; set; }
 
         [Required]
