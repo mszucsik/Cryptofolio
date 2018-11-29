@@ -80,11 +80,10 @@
 <script type="text/javascript">
 
     function updatePriceDisplay(value) {
-        $('#assetdetails').each(function () {
-            $(this).hide();
-        });
+        $('#assetdetails').show();
+        $('#assetdetails').children().hide();
+
         if (value !== "") {
-            $('#assetdetails').show();
             $('#' + value).show();
         }
     }

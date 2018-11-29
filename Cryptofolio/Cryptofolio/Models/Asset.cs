@@ -11,15 +11,14 @@ namespace Cryptofolio.Models
         [Key]
         public int ID { get; set; }
 
+        [Display(Name = "Display Name")]
         public string Name { get; set; }
 
+        [Required]
+        [Display(Name = "Asset Type")]
         public string Code { get; set; }
 
-        public double CurrentPrice { get; set; }
-
-        public double CurrentHigh { get; set; }
-
-        public double CurrentLow { get; set; }
+        public Boolean Activated { get; set; }
     }
 }
 

@@ -23,17 +23,39 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header text-center">
-                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.Name)</h5>
+                    <h4 class="card-title">
+                        @Html.DisplayFor(modelItem => item.Name)
+                        @if (item.Rating > 0 && item.Rating < 25)
+                        {
+                            <span class="badge badge-sm badge-danger">@item.Rating</span>
+                        }
+                        else if (item.Rating >= 25 && item.Rating < 50)
+                        {
+                            <span class="badge badge-sm badge-warning">@item.Rating</span>
+                        }
+                        else if (item.Rating == 50)
+                        {
+                            <span class="badge badge-sm badge-secondary">@item.Rating</span>
+                        }
+                        else if (item.Rating > 50 && item.Rating <= 75)
+                        {
+                            <span class="badge badge-sm badge-info">@item.Rating</span>
+                        }
+                        else if (item.Rating > 75 && item.Rating <= 100)
+                        {
+                            <span class="badge badge-sm badge-success">@item.Rating</span>
+
+                        }
+                        else
+                        {
+                            <span class="badge badge-sm badge-primary">Magic</span>
+                        }
+                    </h4>
+
                     <h6 class="card-subtitle mb-2 text-muted">by @Html.DisplayFor(modelItem => item.OwnerID)</h6>
                 </div>
                 <div class="card-body">
                     <div class="row text-center">
-                        <div class="col-md-4">
-                            <p class="card-text">
-                                Rating
-                                <h4>@Html.DisplayFor(modelItem => item.Rating)</h4>
-                            </p>
-                        </div>
                         <div class="col-md-4">
                             <p class="card-text">
                                 Created on
@@ -43,7 +65,16 @@
                         <div class="col-md-4">
                             <p class="card-text">
                                 Total Value
-                                <h4>@Html.DisplayFor(modelItem => item.USD_Value)</h4>
+                                <h4>$@item.USD_Value.ToString("0.00") USD</h4>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="card-text">
+                                Total Purchased
+                                <h4>
+                                    +@item.Total_Purchased.ToString("0.00")%
+                                </h4>
+
                             </p>
                         </div>
                         <div class="col-md-4">
@@ -52,13 +83,42 @@
                                 @if (item.Percent_Change > 0)
                                 {
                                     <h4 class="text-success">
-                                        +@item.Percent_Change%
+                                        +@item.Percent_Change.ToString("0.00")%
                                     </h4>
                                 }
                                 else
                                 {
                                     <h4 class="text-danger">
-                                        @item.Percent_Change%
+                                        @if (Double.IsNaN(item.Percent_Change))
+                                        {
+                                            <span>
+                                                0.00%
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span>
+                                                @item.Percent_Change.ToString("0.00")%
+                                            </span>
+                                        }
+
+                                    </h4>
+                                }
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="card-text">
+                                USD Change
+                                @if (item.Total_Change > 0)
+                                {
+                                    <h4 class="text-success">
+                                        @item.Total_Change.ToString("0.00") USD
+                                    </h4>
+                                }
+                                else
+                                {
+                                    <h4 class="text-danger">
+                                        @item.Total_Change.ToString("0.00") USD
                                     </h4>
                                 }
                             </p>

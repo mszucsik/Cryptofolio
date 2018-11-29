@@ -19,15 +19,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Code)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CurrentPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CurrentHigh)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CurrentLow)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -39,15 +30,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Code)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CurrentPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CurrentHigh)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CurrentLow)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

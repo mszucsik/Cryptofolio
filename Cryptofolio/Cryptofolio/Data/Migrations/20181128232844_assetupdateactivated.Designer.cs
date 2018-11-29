@@ -4,14 +4,16 @@ using Cryptofolio.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Cryptofolio.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181128232844_assetupdateactivated")]
+    partial class assetupdateactivated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,8 +29,7 @@ namespace Cryptofolio.Data.Migrations
 
                     b.Property<bool>("Activated");
 
-                    b.Property<string>("Code")
-                        .IsRequired();
+                    b.Property<string>("Code");
 
                     b.Property<string>("Name");
 
@@ -96,8 +97,6 @@ namespace Cryptofolio.Data.Migrations
 
                     b.Property<DateTime>("Creation_Date");
 
-                    b.Property<double>("Daily_Change");
-
                     b.Property<string>("Name")
                         .IsRequired();
 
@@ -108,10 +107,6 @@ namespace Cryptofolio.Data.Migrations
                     b.Property<bool>("Privacy_Status");
 
                     b.Property<int>("Rating");
-
-                    b.Property<double>("Total_Change");
-
-                    b.Property<double>("Total_Purchased");
 
                     b.Property<double>("USD_Value");
 

@@ -7,7 +7,14 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @{
-    var assets = ViewData["assets"] as List<Asset>;
+    var prices = ViewData["prices"] as List<MarketPrice>;
+    var dayOldPrices = ViewData["dayoldprices"] as List<MarketPrice>;
+    var dailyChange = (Double)ViewData["dailychange"];
+    var percentChange = (Double)ViewData["percentchange"];
+    var totalPurchased = (Double)ViewData["totalpurchased"];
+    var totalChange = (Double)ViewData["totalchange"];
+    var totalUSD = (Double)ViewData["totalusd"];
+    var totalBTC = (Double)ViewData["totalbtc"];
 }
 <div class="row">
     <div class="col-md-12">
@@ -26,7 +33,39 @@
                     <div class="col-md-4">
                         <p class="card-text">
                             Rating
-                            <h4>@Html.DisplayFor(model => model.Rating)</h4>
+                            <span class="specialbadge">
+                                @if (Model.Rating > 0 && Model.Rating < 25)
+                                {
+                                    <span class="badge badge-sm badge-danger">@Model.Rating</span>
+                                }
+                                else if (Model.Rating >= 25 && Model.Rating < 50)
+                                {
+                                    <span class="badge badge-sm badge-warning">@Model.Rating</span>
+                                }
+                                else if (Model.Rating == 50)
+                                {
+                                    <span class="badge badge-sm badge-secondary">@Model.Rating</span>
+                                }
+                                else if (Model.Rating > 50 && Model.Rating <= 75)
+                                {
+                                    <span class="badge badge-sm badge-info">@Model.Rating</span>
+                                }
+                                else if (Model.Rating > 75 && Model.Rating <= 100)
+                                {
+                                    <span class="badge badge-sm badge-success">@Model.Rating</span>
+
+                                }
+                                else
+                                {
+                                    <span class="badge badge-sm badge-primary">Magic</span>
+                                }
+                            </span>
+                            <br />
+                            @if (!(@UserManager.GetUserName(User) == Model.OwnerID))
+                            {
+                            <a asp-action="Up" asp-route-id="@Model.ID" class="badge badge-sm badge-success"><i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
+                            <a asp-action="Up" asp-route-id="@Model.ID" class="badge badge-sm badge-danger"><i class="fa fa-thumbs-down" aria-hidden="true"></i></a>
+                            }
                         </p>
                     </div>
                     <div class="col-md-4">
@@ -38,28 +77,70 @@
                     <div class="col-md-4">
                         <p class="card-text">
                             Total Value (BTC)
-                            <h4>@Html.DisplayFor(model => model.BTC_Value)</h4>
+                            <h4>@totalBTC.ToString("0.00000") BTC</h4>
                         </p>
                     </div>
                     <div class="col-md-4">
                         <p class="card-text">
                             Total Value (USD)
-                            <h4>@Html.DisplayFor(model => model.USD_Value)</h4>
+                            <h4>$@totalUSD.ToString("0.00")</h4>
                         </p>
                     </div>
                     <div class="col-md-4">
                         <p class="card-text">
-                            Percent Change
-                            @if (Model.Percent_Change > 0)
+                            Total Purchase Price
+                            <h4>
+                                $@totalPurchased.ToString("0.00") USD
+                            </h4>
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="card-text">
+                            Overall Change (%)
+                            @if (percentChange > 0)
                             {
                                 <h4 class="text-success">
-                                    +@Model.Percent_Change%
+                                    +@percentChange.ToString("0.00")%
                                 </h4>
                             }
                             else
                             {
                                 <h4 class="text-danger">
-                                    @Model.Percent_Change%
+                                    @percentChange.ToString("0.00")%
+                                </h4>
+                            }
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="card-text">
+                            Overall Change (USD)
+                            @if (totalChange > 0)
+                            {
+                                <h4 class="text-success">
+                                    @totalChange.ToString("0.00") USD
+                                </h4>
+                            }
+                            else
+                            {
+                                <h4 class="text-danger">
+                                    @totalChange.ToString("0.00") USD
+                                </h4>
+                            }
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <p class="card-text">
+                            24 Hour Change (%)
+                            @if (dailyChange > 0)
+                            {
+                                <h4 class="text-success">
+                                    +@dailyChange.ToString("0.00")%
+                                </h4>
+                            }
+                            else
+                            {
+                                <h4 class="text-danger">
+                                    -@dailyChange.ToString("0.00")%
                                 </h4>
                             }
                         </p>
@@ -72,97 +153,100 @@
             <ul class="list-group list-group-flush">
                 @if (Model.Holdings.Count > 0)
                 {
+                    <div id="holdings-table">
+                        <table id="holdings" class="table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Asset Type</th>
+                                    <th>24 Hour Change</th>
+                                    <th>Amount</th>
+                                    <th>Current Price</th>
+                                    <th>Purchase Price</th>
+                                    <th>Overall Change</th>
+                                    @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
+                                    {
+                                        <th>Options</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Holdings)
+                                {
+                                    var dailychange = 0.00;
+                                    MarketPrice priceContext = new MarketPrice();
 
-                        <div id="holdings-table">
-                            <table id="holdings" class="table table-striped table-bordered" style="width:100%">
+                                    @foreach (var p in prices)
+                                    {
+                                        if (@item.AssetType == p.MarketCurrency)
+                                        {
+                                            priceContext = p;
+                                        }
+                                    }
 
+                                    @foreach (var d in dayOldPrices)
+                                    {
+                                        if (priceContext.MarketCurrency == d.MarketCurrency)
+                                        {
+                                            dailychange = (priceContext.CurrentPrice - d.CurrentPrice) / priceContext.CurrentPrice * 100;
+                                        }
+                                    }
 
-                                <thead>
+                                    var overall = (priceContext.CurrentPrice - item.PurchasePrice) / item.PurchasePrice * 100;
+
                                     <tr>
-                                        <th>Asset Type</th>
-                                        <th>Amount</th>
-                                        <th>Current Price</th>
-                                        <th>Purchase Price</th>
-                                        <th>24 Hour Change</th>
-                                        <th>Overall Change</th>
+                                        <td>@item.AssetType</td>
+                                        <td>
+                                            @if (dailychange > 0)
+                                            {
+                                                <span class="text-success">+@dailychange.ToString("0.00")%</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-danger">@dailychange.ToString("0.00")%</span>
+                                            }
+                                        </td>
+                                        <td>@item.Amount</td>
+                                        <td>$@priceContext.CurrentPrice.ToString("0.00")</td>
+                                        <td>$@item.PurchasePrice.ToString("0.00")</td>
+                                        <td>
+                                            @if (overall > 0)
+                                            {
+                                                <span class="text-success">+@overall.ToString("0.00")%</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-danger">@overall.ToString("0.00")%</span>
+                                            }
+                                        </td>
+
                                         @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
                                         {
-                                            <th>Options</th>
+                                            <td class="text-center">
+                                                <a asp-action="EditHolding" asp-route-id="@item.ID" class="btn btn-sm btn-primary card-link holding-btn">Edit</a>
+                                                <a asp-action="DeleteHolding" asp-route-id="@item.ID" class="btn btn-sm btn-danger card-link holding-btn">Delete</a>
+                                            </td>
                                         }
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.Holdings)
-                                    {
-                                        Asset assetContext = new Asset();
-                                        @foreach (var asset in assets)
-                                        {
-                                            if (@item.AssetType == asset.Code)
-                                            {
-                                                assetContext = asset;
-                                            }
-                                        }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
 
-
-                                        var overall = (assetContext.CurrentPrice - item.PurchasePrice) / item.PurchasePrice * 100;
-                                        var dailychange = 0.00;
-                                        <tr>
-                                            <td>@item.AssetType</td>
-                                            <td>@item.Amount</td>
-                                            <td>$@assetContext.CurrentPrice.ToString("0.00")</td>
-                                            <td>$@item.PurchasePrice.ToString("0.00")</td>
-                                            <td>
-                                                @if (dailychange > 0)
-                                                {
-                                                    <span class="text-success">+@dailychange.ToString("0.00")%</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-danger">@dailychange.ToString("0.00")%</span>
-                                                }
-                                            </td>
-                                            <td>
-                                                @if (overall > 0)
-                                                {
-                                                    <span class="text-success">+@overall.ToString("0.00")%</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-danger">@overall.ToString("0.00")%</span>
-                                                }
-                                            </td>
-
-                                            @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
-                                            {
-                                                <td class="text-center">
-                                                    <a asp-action="EditHolding" asp-route-id="@item.ID" class="btn btn-sm btn-primary card-link holding-btn">Edit</a>
-                                                    <a asp-action="DeleteHolding" asp-route-id="@item.ID" class="btn btn-sm btn-danger card-link holding-btn">Delete</a>
-                                                </td>
-                                            }
-                                        </tr>
-
-                                    }
-                                </tbody>
-
-                            </table>
-                        </div>
-                   
                 }
                 else
                 {
                     <li class="list-group-item">
-
                         <div class="text-center spaced-out">
                             This portfolio doesn't have any holdings yet
-                            @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin"))) { 
+                            @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
+                            {
                                 <span>, </span><a asp-action="AddHolding" class="card-link" asp-route-id="@Model.ID">click here</a><span> to add one</span>
                             }
                         </div>
-                        </li>
+                    </li>
                 }
                 @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
                 {
-
 
                     <li class="list-group-item">
                         <div class="row">
@@ -173,8 +257,6 @@
                             </div>
                         </div>
                     </li>
-
-
                 }
             </ul>
             <div class="card-body">

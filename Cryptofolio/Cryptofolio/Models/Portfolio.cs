@@ -19,8 +19,17 @@ namespace Cryptofolio.Models
 
         public int Rating { get; set; }
 
+        [Display(Name = "Daily Change")]
+        public virtual double Daily_Change { get; set; }
+
         [Display(Name = "Percent Change")]
         public virtual double Percent_Change { get; set; }
+
+        [Display(Name = "Total Purchased")]
+        public virtual double Total_Purchased { get; set; }
+
+        [Display(Name = "TotalChange")]
+        public virtual double Total_Change { get; set; }
 
         [Display(Name = "BTC Value")]
         public virtual double BTC_Value { get; set; }

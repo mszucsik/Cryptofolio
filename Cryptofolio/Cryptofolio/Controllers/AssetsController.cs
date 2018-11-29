@@ -44,8 +44,17 @@ namespace Cryptofolio.Controllers
         }
 
         // GET: Assets/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+
+
+            var query = from m in _context.MarketPrice
+                        orderby m.TimeStamp descending
+                        select m.MarketCurrency;
+            List<String> codes = await query.Distinct().ToListAsync();
+
+            ViewData["assets"] = codes;
+
             return View();
         }
 
@@ -54,13 +63,11 @@ namespace Cryptofolio.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name")] Asset asset)
+        public async Task<IActionResult> Create([Bind("ID,Name,Code,Activated")] Asset asset)
         {
             if (ModelState.IsValid)
             {
-                asset.CurrentHigh = 6503.32;
-                asset.CurrentLow = 6303.18;
-                asset.CurrentPrice = (asset.CurrentLow + asset.CurrentHigh) / 2;
+
 
                 _context.Add(asset);
                 await _context.SaveChangesAsync();
@@ -90,7 +97,7 @@ namespace Cryptofolio.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Code,CurrentPrice,CurrentHigh,CurrentLow")] Asset asset)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Code,Activated")] Asset asset)
         {
             if (id != asset.ID)
             {
