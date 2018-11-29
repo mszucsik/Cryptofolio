@@ -1,4 +1,6 @@
 ﻿@model Cryptofolio.Models.Portfolio
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Delete " + Model.Name;
@@ -12,53 +14,28 @@
                 <h3>Delete @Html.DisplayFor(model => model.Name)?</h3>
             </div>
             <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-md-4">
-                        <p class="card-text">
-                            Created by
-                            <h4>@Html.DisplayFor(model => model.OwnerID)</h4>
-                        </p>
-                    </div>
-                    <div class="col-md-4">
-                        <p class="card-text">
-                            Rating
-                            <h4>@Html.DisplayFor(model => model.Rating)</h4>
-                        </p>
-                    </div>
-                    <div class="col-md-4">
-                        <p class="card-text">
-                            Created on
-                            <h4>@Html.DisplayFor(model => model.Creation_Date)</h4>
-                        </p>
-                    </div>
-                    <div class="col-md-4">
-                        <p class="card-text">
-                            Total Value (BTC)
-                            <h4>@Html.DisplayFor(model => model.BTC_Value)</h4>
-                        </p>
-                    </div>
-                    <div class="col-md-4">
-                        <p class="card-text">
-                            Total Value (USD)
-                            <h4>@Html.DisplayFor(model => model.USD_Value)</h4>
-                        </p>
-                    </div>
-                    <div class="col-md-4">
-                        <p class="card-text">
-                            Percent Change
-                            @if (Model.Percent_Change > 0)
-                            {
-                                <h4 class="text-success">
-                                    +@Model.Percent_Change%
-                                </h4>
-                            }
-                            else
-                            {
-                                <h4 class="text-danger">
-                                    @Model.Percent_Change%
-                                </h4>
-                            }
-                        </p>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <p class="card-text">
+                                    Created by
+                                    <h4>@Html.DisplayFor(model => model.OwnerID)</h4>
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="card-text">
+                                    Rating
+                                    <h4>@Html.DisplayFor(model => model.Rating)</h4>
+                                </p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="card-text">
+                                    Created on
+                                    <h4>@Html.DisplayFor(model => model.Creation_Date)</h4>
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -66,8 +43,10 @@
                 <form asp-action="Delete">
                     <input type="hidden" asp-for="ID" />
                     <a asp-action="Index" class="card-link">Back to portfolio list</a>
-                    <input type="submit" value="Yes, delete @Model.Name" class="btn btn-sm btn-danger card-link" />
-
+                    @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
+                    {
+                        <input type="submit" value="Yes, delete @Model.Name" class="btn btn-sm btn-danger card-link" />
+                    }
                 </form>
             </div>
         </div>

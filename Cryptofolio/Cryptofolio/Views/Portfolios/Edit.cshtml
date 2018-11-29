@@ -1,4 +1,6 @@
 ﻿@model Cryptofolio.Models.Portfolio
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Edit " + Model.Name;
@@ -26,7 +28,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <div class="checkbox">
-                                    <label class="control-label">Make this portfolio private?</label><br/>
+                                    <label class="control-label">Make this portfolio private?</label><br />
                                     <label>
                                         <input asp-for="Privacy_Status" /> @Html.DisplayNameFor(model => model.Privacy_Status)
                                     </label>
@@ -41,8 +43,11 @@
             </div>
             <div class="card-body">
                 <a asp-action="Index" class="card-link">Back to portfolio list</a>
-                <a asp-action="Delete" asp-route-id="@Model.ID" class="card-link">Delete this portfolio</a>
-            </div>
+                @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
+                {
+                    <a asp-action="Delete" asp-route-id="@Model.ID" class="card-link">Delete this portfolio</a>
+                }
+                </div>
         </div>
     </div>
 </div>

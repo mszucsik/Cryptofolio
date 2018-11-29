@@ -1,4 +1,6 @@
 ﻿@model Cryptofolio.Models.Holding
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Delete";
@@ -7,36 +9,61 @@
     var id = ViewData["id"];
 }
 
-<h2>Delete</h2>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header text-center">
+                <h3>Delete Holding of @Html.DisplayFor(model => model.AssetType)?</h3>
+            </div>
+            <div class="card-body">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row text-center">
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Holding</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.OwnerID)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.OwnerID)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Creation_Date)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Creation_Date)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Amount)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Amount)
-        </dd>
-    </dl>
-
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="ID" />
-        <input type="submit" value="Delete" class="btn btn-default" /> |
-        <a asp-action="Details" asp-route-id="@id">Back to the Portfolio</a>
-    </form>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h5>
+                                        @Html.DisplayNameFor(model => model.Amount)
+                                    </h5>
+                                    <h4>
+                                        @Html.DisplayFor(model => model.Amount)
+                                    </h4>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h5>
+                                        @Html.DisplayNameFor(model => model.PurchasePrice)
+                                    </h5>
+                                    <h4>
+                                        @Html.DisplayFor(model => model.PurchasePrice)
+                                    </h4>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <h5>
+                                        @Html.DisplayNameFor(model => model.AssetType)
+                                    </h5>
+                                    <h4>
+                                        @Html.DisplayFor(model => model.AssetType)
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="ID" />
+                    <a asp-action="Details" asp-route-id="@id" class=" card-link">Back to the Portfolio</a>
+                    @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
+                    {
+                        <input type="submit" value="Yes, delete @Model.AssetType" class="btn btn-sm btn-danger card-link" />
+                    }
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

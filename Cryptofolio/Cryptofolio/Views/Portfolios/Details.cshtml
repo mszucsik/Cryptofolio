@@ -61,10 +61,10 @@
                                 }
                             </span>
                             <br />
-                            @if (!(@UserManager.GetUserName(User) == Model.OwnerID))
+                            @if ((!(@UserManager.GetUserName(User) == Model.OwnerID)) || ((User.IsInRole("Admin"))))
                             {
-                            <a asp-action="Up" asp-route-id="@Model.ID" class="badge badge-sm badge-success"><i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
-                            <a asp-action="Up" asp-route-id="@Model.ID" class="badge badge-sm badge-danger"><i class="fa fa-thumbs-down" aria-hidden="true"></i></a>
+                                <a asp-action="Up" asp-route-id="@Model.ID" class="badge badge-sm badge-success"><i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
+                                <a asp-action="Up" asp-route-id="@Model.ID" class="badge badge-sm badge-danger"><i class="fa fa-thumbs-down" aria-hidden="true"></i></a>
                             }
                         </p>
                     </div>

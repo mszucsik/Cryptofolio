@@ -5,9 +5,11 @@
 
 @{
     ViewData["Title"] = "Cryptofolio";
-    var count = ViewBag.count;
-    var total = ViewBag.total;
-    var daychange = ViewBag.daychange;
+    var count = (Double)ViewBag.count;
+    var total = (Double)ViewBag.total;
+    var daychange = (Double)ViewBag.daychange;
+    var dates = ViewBag.chartDates as List<String>;
+    var rates = ViewBag.chartRates as List<String>;
 }
 
 
@@ -24,8 +26,8 @@
             <div class="col-md-4">
                 <p class="card-text">
                     Total Value of All Portfolios
-                    <h1>$@total</h1>
-               </p>
+                    <h1>$@total.ToString("0.00")</h1>
+                </p>
             </div>
             <div class="col-md-4">
                 <p class="card-text">
@@ -33,16 +35,16 @@
                     @if (@daychange > 0)
                     {
                         <h1 class="text-success">
-                            +@daychange%
+                            +@daychange.ToString("0.00")%
                         </h1>
                     }
                     else
                     {
                         <h1 class="text-danger">
-                            @daychange%
+                            @daychange.ToString("0.00")%
                         </h1>
                     }
-</div>
+            </div>
         </div>
     </div>
     <div class="card-body text-center">
@@ -51,7 +53,7 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-body">
-                        <p class="card-text">Graph goes here</p>
+                        <canvas id="myChart" width="400" height="400"></canvas>
                     </div>
                 </div>
             </div>
@@ -83,3 +85,34 @@
 
 
 </div>
+
+<script>
+    var ctx = document.getElementById("myChart").getContext('2d');
+    var myLineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [@foreach (String d in dates) { @d; }],
+            datasets: [{
+                    label: 'Market Rates',
+                data: [@foreach (String r in rates) { @r; }],
+                borderColor: [
+                    'rgba(255,15,22,1)'
+                ],
+                backgroundColor: [
+                    'rgba(255,15,22,0.2)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+
+</script>

@@ -1,4 +1,6 @@
 ﻿@model Cryptofolio.Models.Holding
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Edit";
@@ -7,41 +9,84 @@
     var id = ViewData["id"];
 }
 
-<h2>Edit</h2>
-
-<h4>Holding</h4>
-<hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ID" />
-            <div class="form-group">
-                <label asp-for="OwnerID" class="control-label"></label>
-                <input asp-for="OwnerID" class="form-control" />
-                <span asp-validation-for="OwnerID" class="text-danger"></span>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header text-center">
+                <h3>Add a holding</h3>
             </div>
-            <div class="form-group">
-                <label asp-for="Creation_Date" class="control-label"></label>
-                <input asp-for="Creation_Date" class="form-control" />
-                <span asp-validation-for="Creation_Date" class="text-danger"></span>
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="ID" />
+                    <div class="card-body">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <h5>
+                                                @Html.DisplayNameFor(model => model.Amount)
+                                            </h5>
+                                            <h4>
+                                                @Html.DisplayFor(model => model.Amount)
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <h5>
+                                                @Html.DisplayNameFor(model => model.PurchasePrice)
+                                            </h5>
+                                            <h4>
+                                                @Html.DisplayFor(model => model.PurchasePrice)
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <h5>
+                                                @Html.DisplayNameFor(model => model.AssetType)
+                                            </h5>
+                                            <h4>
+                                                @Html.DisplayFor(model => model.AssetType)
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Amount" class="control-label"></label>
+                                    <input asp-for="Amount" class="form-control" />
+                                    <span asp-validation-for="Amount" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <input type="submit" value="Save" class="btn btn-default" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Amount" class="control-label"></label>
-                <input asp-for="Amount" class="form-control" />
-                <span asp-validation-for="Amount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </form>
+        </div>
+    </div>
+    <div class="card-body">
+        <a asp-action="Details" asp-route-id="@id" class="card-link">Back to portfolio</a>
+        @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
+        {
+            <a asp-action="Delete" asp-route-id="@Model.ID" class="card-link">Delete this portfolio</a>
+        }
     </div>
 </div>
-
-<div>
-    <a asp-action="Details" asp-route-id="@id">Back to the Portfolio</a>
+    </div>
 </div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

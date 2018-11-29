@@ -11,9 +11,18 @@
         <li class="nav-item">
             <a class="btn btn-link nav-btn nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
         </li>
-        <li class="nav-item">
-            <a class="btn btn-link nav-btn nav-link" asp-area="" asp-controller="Portfolios" asp-action="Index">My Portfolios</a>
-        </li>
+        @if (User.IsInRole("Admin"))
+        {
+            <li class="nav-item">
+                <a class="btn btn-link nav-btn nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Manage</a>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item">
+                <a class="btn btn-link nav-btn nav-link" asp-area="" asp-controller="Portfolios" asp-action="Index">My Portfolios</a>
+            </li>
+        }
         <li class="nav-item">
             <button type="submit" class="btn btn-link nav-btn nav-link">Logout</button>
         </li>

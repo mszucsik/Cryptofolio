@@ -217,7 +217,7 @@
                         <a asp-action="Edit" asp-route-id="@item.ID" class="card-link">Make changes</a>
                     }
                     <a asp-action="Details" asp-route-id="@item.ID" class="card-link">View portfolio</a>
-                    @if (!(@UserManager.GetUserName(User) == item.OwnerID))
+                    @if ((!(@UserManager.GetUserName(User) == item.OwnerID)) || ((User.IsInRole("Admin"))))
                     {
                         <span class="card-link">Rate</span>
                         <a asp-action="Up" asp-route-id="@item.ID" class="badge badge-sm badge-success"><i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
