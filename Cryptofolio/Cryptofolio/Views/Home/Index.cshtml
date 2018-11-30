@@ -52,8 +52,8 @@
             <div class="col-lg-10 chart-col">
                 <div class="card">
                     <div class="card-body">
-                        <div class="chart-left" style="position:relative;">
-                            <canvas id="myChart"></canvas>
+                        <div id="chart" class="chart-left" style="position:relative;">
+                            <canvas id="datachart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -118,11 +118,15 @@
 
 
 </div>
-
+@section scripts
+    {
+    <script>
+        $(document).ready(function () {
+            updateChart(30, 1);
+        });
+    </script>
+}
 <script>
-
-
-    updateChart(30, 1);
 
 
     function setDateRange(value) {
@@ -158,6 +162,7 @@
         $('#dataselected').val(value);
         var dateRange = $('#daterange').val();
         updateChart(dateRange, value);
+
         if (value == 1) {
             $('#btnpercent').removeClass("btn-success").addClass("btn-secondary");
             $('#btnbtc').removeClass("btn-success").addClass("btn-secondary");
@@ -179,7 +184,7 @@
             var dataArray = @Html.Raw(Json.Serialize(ViewBag.chartRatesUSD));
         } else if(dataSelected == 2){
             var dataArray = @Html.Raw(Json.Serialize(ViewBag.chartRatesBTC));
-        } else {
+        } else if (dataSelected == 3) {
              var dataArray = @Html.Raw(Json.Serialize(ViewBag.chartRatesPercent));
         }
         var dateArray = @Html.Raw(Json.Serialize(ViewBag.chartDates));
@@ -194,8 +199,10 @@
            dates.push(dateArray[i]);
         }
 
+        $('#chart').empty();
+        $('#chart').html('<canvas id="datachart"></canvas>');
 
-        var ctx = document.getElementById("myChart").getContext('2d');
+        var ctx = document.getElementById("datachart").getContext('2d');
         var myLineChart = new Chart(ctx, {
             type: 'line',
             data: {
