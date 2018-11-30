@@ -231,9 +231,18 @@
                     <a asp-action="Details" asp-route-id="@item.ID" class="card-link">View portfolio</a>
                     @if ((!(@UserManager.GetUserName(User) == item.OwnerID)) || ((User.IsInRole("Admin"))))
                     {
-                        <span class="card-link">Rate</span>
-                        <a asp-action="Up" asp-route-id="@item.ID" class="badge badge-sm badge-success"><i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
-                        <a asp-action="Up" asp-route-id="@item.ID" class="badge badge-sm badge-danger"><i class="fa fa-thumbs-down" aria-hidden="true"></i></a>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <span class="card-link">Vote</span>
+                            <a asp-action="DownVoteOnList" asp-route-id="@item.ID" class="badge badge-sm badge-danger"><i class="fa fa-thumbs-down" aria-hidden="true"></i></a>
+                            <a asp-action="ClearVoteOnList" asp-route-id="@item.ID" class="badge badge-sm badge-secondary"><i class="fa fa-minus" aria-hidden="true"></i></a>
+                            <a asp-action="UpVoteOnList" asp-route-id="@item.ID" class="badge badge-sm badge-success"><i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
+
+                        }
+                        else
+                        {
+                            <span class="small-msg card-link">Sign in to rate</span>
+                        }
                     }
                 </div>
             </div>

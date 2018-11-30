@@ -32,6 +32,13 @@ namespace Cryptofolio.Controllers
             Portfolio topPortfolio = new Portfolio();
             foreach (Portfolio portfolio in portfolios)
             {
+                var ratings = await _context.Rating.Where(o => o.Portfolio_ID == portfolio.ID).ToListAsync();
+                var updatedRating = 0;
+                foreach (Rating r in ratings)
+                {
+                    updatedRating += (int)r.Vote;
+                }
+                portfolio.Rating += updatedRating;
                 if (portfolio.Privacy_Status == false)
                 {
                     displayPortfolios.Add(portfolio);
@@ -70,6 +77,13 @@ namespace Cryptofolio.Controllers
             {
                 if ((User.Identity.Name == portfolio.OwnerID) || User.IsInRole("Admin"))
                 {
+                    var ratings = await _context.Rating.Where(o => o.Portfolio_ID == portfolio.ID).ToListAsync();
+                    var updatedRating = 0;
+                    foreach (Rating r in ratings)
+                    {
+                        updatedRating += (int)r.Vote;
+                    }
+                    portfolio.Rating += updatedRating;
                     displayPortfolios.Add(portfolio);
                 }
             }
@@ -178,6 +192,15 @@ namespace Cryptofolio.Controllers
 
             var portfolio = await _context.Portfolio
                 .FirstOrDefaultAsync(m => m.ID == id);
+
+            var ratings = await _context.Rating.Where(o => o.Portfolio_ID == portfolio.ID).ToListAsync();
+            var updatedRating = 0;
+            foreach (Rating r in ratings)
+            {
+                updatedRating += (int)r.Vote;
+            }
+            portfolio.Rating += updatedRating;
+
             if (portfolio == null)
             {
                 return NotFound();
@@ -461,6 +484,13 @@ namespace Cryptofolio.Controllers
 
             if ((User.Identity.Name == portfolio.OwnerID) || User.IsInRole("Admin"))
             {
+                var ratings = await _context.Rating.Where(o => o.Portfolio_ID == portfolio.ID).ToListAsync();
+                var updatedRating = 0;
+                foreach (Rating r in ratings)
+                {
+                    updatedRating += (int)r.Vote;
+                }
+                portfolio.Rating += updatedRating;
                 return View(portfolio);
             }
             else
@@ -714,6 +744,102 @@ namespace Cryptofolio.Controllers
             }
             return RedirectToAction("Details", new { id = comment.Portfolio_ID });
         }
+
+
+        public async Task<IActionResult> UpVoteOnDetails(int id)
+        {
+
+            var portfolio = await _context.Portfolio.Where(o => o.ID == id).FirstAsync();
+            if (portfolio != null)
+            {
+                await setVote(portfolio, User.Identity.Name, RatingType.Up);
+            }
+            return RedirectToAction("Details", new { id = id });
+
+        }
+
+        public async Task<IActionResult> UpVoteOnList(int id)
+        {
+            var portfolio = await _context.Portfolio.Where(o => o.ID == id).FirstAsync();
+            if (portfolio != null)
+            {
+                await setVote(portfolio, User.Identity.Name, RatingType.Up);
+            }
+            return RedirectToAction("Portfolios");
+
+        }
+
+        public async Task<IActionResult> DownVoteOnDetails(int id)
+        {
+
+            var portfolio = await _context.Portfolio.Where(o => o.ID == id).FirstAsync();
+            if (portfolio != null)
+            {
+                await setVote(portfolio, User.Identity.Name, RatingType.Down);
+            }
+            return RedirectToAction("Details", new { id = id });
+
+        }
+
+        public async Task<IActionResult> DownVoteOnList(int id)
+        {
+            var portfolio = await _context.Portfolio.Where(o => o.ID == id).FirstAsync();
+            if (portfolio != null)
+            {
+                await setVote(portfolio, User.Identity.Name, RatingType.Down);
+            }
+            return RedirectToAction("Portfolios");
+
+        }
+
+        public async Task<IActionResult> ClearVoteOnDetails(int id)
+        {
+
+            var portfolio = await _context.Portfolio.Where(o => o.ID == id).FirstAsync();
+            if (portfolio != null)
+            {
+                await setVote(portfolio, User.Identity.Name, RatingType.None);
+            }
+            return RedirectToAction("Details", new { id = id });
+
+        }
+
+        public async Task<IActionResult> ClearVoteOnList(int id)
+        {
+            var portfolio = await _context.Portfolio.Where(o => o.ID == id).FirstAsync();
+            if (portfolio != null)
+            {
+                await setVote(portfolio, User.Identity.Name, RatingType.None);
+            }
+            return RedirectToAction("Portfolios");
+
+        }
+
+        public async Task setVote([Bind("ID,OwnerID")] Portfolio p, string username, RatingType type)
+        {
+            if (username != p.OwnerID || User.IsInRole("Admin"))
+            {
+
+                var rating = await _context.Rating.Where(o => o.OwnerID == username && o.Portfolio_ID == p.ID).FirstOrDefaultAsync();
+                if (rating == null)
+                {
+                    rating = new Rating();
+                    rating.Vote = type;
+                    rating.Creation_Date = DateTime.Now;
+                    rating.OwnerID = User.Identity.Name;
+                    rating.Portfolio_ID = p.ID;
+                    _context.Add(rating);
+                }
+                else
+                {
+                    rating.Vote = type;
+                    _context.Update(rating);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
 
     }
 }

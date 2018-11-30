@@ -18,5 +18,6 @@ namespace Cryptofolio.Data
         public DbSet<Cryptofolio.Models.Asset> Asset { get; set; }
         public DbSet<Cryptofolio.Models.MarketPrice> MarketPrice { get; set; }
         public DbSet<Cryptofolio.Models.Comment> Comment { get; set; }
+        public DbSet<Cryptofolio.Models.Rating> Rating { get; set; }
     }
 }

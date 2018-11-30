@@ -47,6 +47,9 @@
     <Content Update="Views\Comments\_EditCommentPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Ratings\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Portfolios\Portfolios.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

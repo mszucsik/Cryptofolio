@@ -62,14 +62,18 @@
                                 }
                             </span>
                             <br />
-                            @if ((User.IsInRole("Admin")) || ((User.IsInRole("User")) && (!(@UserManager.GetUserName(User) == Model.OwnerID))))
+                            @if ((!(@UserManager.GetUserName(User) == Model.OwnerID)) || ((User.IsInRole("Admin"))))
                             {
-                                <a asp-action="Up" asp-route-id="@Model.ID" class="badge badge-sm badge-success"><i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
-                                <a asp-action="Up" asp-route-id="@Model.ID" class="badge badge-sm badge-danger"><i class="fa fa-thumbs-down" aria-hidden="true"></i></a>
-                            }
-                            else if (@UserManager.GetUserName(User) != Model.OwnerID && !(User.IsInRole("User")))
-                            {
-                                <span class="small-msg">Sign in to rate</span>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+
+                                    <a asp-action="DownVoteOnDetails" asp-route-id="@Model.ID" class="badge badge-sm badge-danger"><i class="fa fa-thumbs-down" aria-hidden="true"></i></a>
+                                    <a asp-action="ClearVoteOnDetails" asp-route-id="@Model.ID" class="badge badge-sm badge-secondary"><i class="fa fa-minus" aria-hidden="true"></i></a>
+                                    <a asp-action="UpVoteOnDetails" asp-route-id="@Model.ID" class="badge badge-sm badge-success"><i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
+                                }
+                                else
+                                {<span class="small-msg">Sign in to rate</span>}
+
                             }
                         </p>
                     </div>

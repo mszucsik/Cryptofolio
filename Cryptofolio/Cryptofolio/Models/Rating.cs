@@ -15,6 +15,8 @@ namespace Cryptofolio.Models
 
         public int Portfolio_ID { get; set; }
 
+        public virtual string Portfolio_Name { get; set; }
+
         public DateTime Creation_Date { get; set; }
 
         [EnumDataType(typeof(RatingType))]
