@@ -30,6 +30,22 @@ h6 {
 .specialbadge {
     font-size: 26px;
 }
+.badge-user {
+    font-size: 12px;
+    font-weight: 200;
+}
+.no-margin {
+    margin-bottom: 0;
+}
+.small-msg {
+    font-size: 10px;
+    font-weight: bold;
+    color: goldenrod;
+}
+.col-md-4 {
+    padding-bottom:10px;
+    padding-top:10px;
+}
     h1,h2,h3 {
     margin-top: 15px;
     margin-bottom: 10px;

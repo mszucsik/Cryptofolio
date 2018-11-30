@@ -85,7 +85,7 @@ namespace Cryptofolio.Controllers
                         orderby m.TimeStamp descending
                         select m;
 
-            List<Asset> assets =  _context.Asset.Where(a => a.Activated == true).ToList();
+            List<Asset> assets = _context.Asset.Where(a => a.Activated == true).ToList();
             List<MarketPrice> marketPrices = query.ToList();
             List<MarketPrice> displayPrices = new List<MarketPrice>();
             List<MarketPrice> dayOldPrices = new List<MarketPrice>();
@@ -151,7 +151,7 @@ namespace Cryptofolio.Controllers
                 }
 
                 totalChange = totalUSD - totalPurchased;
-                percentChange = ((totalUSD / totalPurchased)-1) * 100;
+                percentChange = ((totalUSD / totalPurchased) - 1) * 100;
                 dailyChange = (totalUSD - oldTotal) / totalUSD * 100;
                 totalBTC = totalUSD / btcPrice;
                 p.Total_Change = totalChange;
@@ -277,7 +277,8 @@ namespace Cryptofolio.Controllers
                 ViewData["prices"] = displayPrices;
                 ViewData["dayoldprices"] = dayOldPrices;
 
-
+                List<Comment> comments = await _context.Comment.Where(a => a.Portfolio_ID == id).OrderByDescending(a => a.Creation_Date).ToListAsync();
+                ViewData["comments"] = comments;
 
                 return View(portfolio);
             }
@@ -379,9 +380,8 @@ namespace Cryptofolio.Controllers
                             throw;
                         }
                     }
-                    return RedirectToAction(nameof(Index));
                 }
-                return View(portfolio);
+                return RedirectToAction("Details", new { id = id });
             }
             else
             {
@@ -456,7 +456,7 @@ namespace Cryptofolio.Controllers
                 foreach (Asset a in assets)
                 {
                     foreach (MarketPrice m in marketPrices)
-                {
+                    {
 
                         if (a.Code == m.MarketCurrency)
                         {
@@ -588,7 +588,7 @@ namespace Cryptofolio.Controllers
         }
 
         // POST: Holdings/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("DeleteHolding")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteHoldingConfirmed(int id)
         {
@@ -602,5 +602,62 @@ namespace Cryptofolio.Controllers
         {
             return _context.Holding.Any(e => e.ID == id);
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> AddComment([Bind("ID,OwnerID,Portfolio_ID,Creation_Date,Message")] Comment comment)
+        {
+            comment.Creation_Date = DateTime.Now;
+
+            if (ModelState.IsValid)
+            {
+                _context.Add(comment);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Details", new { id = comment.Portfolio_ID });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> EditComment(int id, [Bind("ID,Message")] Comment comment)
+        {
+            var editComment = await _context.Comment.FindAsync(comment.ID);
+            editComment.Message = comment.Message;
+            if ((User.Identity.Name == editComment.OwnerID) || User.IsInRole("Admin"))
+            {
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        _context.Update(editComment);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        throw;
+
+                    }
+                }
+            }
+            return RedirectToAction("Details", new { id = editComment.Portfolio_ID });
+        }
+
+        [HttpPost, ActionName("DeleteComment")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> DeleteComment([Bind("ID,OwnerID,Portfolio_ID,Creation_Date,Message")] Comment comment)
+        {
+            if ((User.Identity.Name == comment.OwnerID) || User.IsInRole("Admin"))
+            {
+                _context.Comment.Remove(comment);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Details", new { id = comment.Portfolio_ID });
+        }
+
     }
 }

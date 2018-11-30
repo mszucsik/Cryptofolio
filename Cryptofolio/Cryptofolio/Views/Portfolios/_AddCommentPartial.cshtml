@@ -1,0 +1,19 @@
+﻿@model Cryptofolio.Models.Comment
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="AddComment">
+            <div class="form-group">
+                <input asp-for="Portfolio_ID" class="form-control" hidden value="@Model.Portfolio_ID" />
+                <input asp-for="OwnerID" class="form-control" hidden value="@Model.OwnerID" />
+            </div>
+            <div class="form-group">
+                Leave a comment
+                <input asp-for="Message" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Comment" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>

@@ -5,7 +5,18 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="text-center"><h2>My Portfolios</h2></div>
+
+<div class="text-center">
+    @if (User.IsInRole("Admin"))
+    {
+        <h2>All Portfolios</h2>
+    }
+    else
+    {
+        <h2>My Portfolios</h2>
+    }
+
+</div>
 
 
 <div class="row">
@@ -72,14 +83,15 @@
                             <p class="card-text">
                                 Total Purchased
                                 <h4>
-                                    +@item.Total_Purchased.ToString("0.00")%
+                                    $@item.Total_Purchased.ToString("0.00") USD
+
                                 </h4>
 
                             </p>
                         </div>
                         <div class="col-md-4">
                             <p class="card-text">
-                                Percent Change
+                                Overall Change
                                 @if (item.Percent_Change > 0)
                                 {
                                     <h4 class="text-success">
@@ -123,9 +135,38 @@
                                 }
                             </p>
                         </div>
+                        <div class="col-md-4">
+                            <p class="card-text">
+                                24 Hour Change
+                                @if (item.Daily_Change > 0)
+                                {
+                                    <h4 class="text-success">
+                                        +@item.Daily_Change.ToString("0.00")%
+                                    </h4>
+                                }
+                                else
+                                {
+                                    <h4 class="text-danger">
+                                        @if (Double.IsNaN(item.Daily_Change))
+                                        {
+                                            <span>
+                                                0.00%
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span>
+                                                @item.Daily_Change.ToString("0.00")%
+                                            </span>
+                                        }
+
+                                    </h4>
+                                }
+                            </p>
+                        </div>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-footer">
                     <a asp-action="Edit" asp-route-id="@item.ID" class="card-link">Make changes</a>
                     <a asp-action="Details" asp-route-id="@item.ID" class="card-link">View portfolio</a>
                 </div>

@@ -55,7 +55,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <form asp-action="Delete">
+                <form asp-action="DeleteHolding">
                     <input type="hidden" asp-for="ID" />
                     <a asp-action="Details" asp-route-id="@id" class=" card-link">Back to the Portfolio</a>
                     @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
