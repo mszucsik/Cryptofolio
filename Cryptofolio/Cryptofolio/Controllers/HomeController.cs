@@ -23,38 +23,52 @@ namespace Cryptofolio.Controllers
         public async Task<IActionResult> Index()
         {
             List<Portfolio> portfolios = await _context.Portfolio.ToListAsync();
-            double total = 0;
-            double altValue = 0;
-            portfolios = getPortfolioStatistics(portfolios);
-            foreach (Portfolio portfolio in portfolios)
-            {
-                total += portfolio.USD_Value;
-                altValue += portfolio.BTC_Value;
-            }
+            List<MarketPrice> marketPrices = await _context.MarketPrice.OrderBy(o => o.TimeStamp).ToListAsync();
 
-            List<String> chartRates = new List<String>();
+
+            List<Holding> holdings = await _context.Holding.ToListAsync();
+            DateTime temp = DateTime.Now.AddDays(-33);
+            double tempTotalUSD = 0;
+            double tempTotalBTC = 0;
+            double tempPercent = 0;
+            double tempBTC = 0;
             List<String> chartDates = new List<String>();
-            List<MarketPrice> marketRates = await _context.MarketPrice.OrderBy(o => o.TimeStamp).ToListAsync();
-            DateTime temp = DateTime.Now.AddDays(-31);
-            double tempTotal = 0;
-            foreach (MarketPrice m in marketRates) {
+            List<String> chartRatesUSD = new List<String>();
+            List<String> chartRatesBTC = new List<String>();
+            List<String> chartRatesPercent = new List<String>();
+            foreach (MarketPrice m in marketPrices)
+            {
+                if (m.MarketCurrency == "BTC")
+                {
+                    tempBTC = m.CurrentPrice;
+                }
                 if (temp < m.TimeStamp)
                 {
-                    chartDates.Add(m.TimeStamp.ToString());
-                    chartRates.Add(tempTotal.ToString());
                     temp = m.TimeStamp;
-                    tempTotal = 0;
+                    chartDates.Add(temp.ToShortDateString());
+                    chartRatesUSD.Add(tempTotalUSD.ToString());
+                    chartRatesBTC.Add(tempTotalBTC.ToString());
+                    tempTotalUSD = 0;
+                    tempTotalBTC = 0;
                 }
-                else if (temp == m.TimeStamp)
+                foreach (Holding h in holdings)
                 {
-                    tempTotal += m.CurrentPrice;
+                    if (m.MarketCurrency == h.AssetType)
+                    {
+                        tempTotalUSD += h.Amount * m.CurrentPrice;
+                        tempTotalBTC += h.Amount * m.CurrentPrice / tempBTC;
+                    }
                 }
             }
+
+
+
             ViewBag.count = portfolios.Count;
-            ViewBag.total = total;
-            ViewBag.daychange = (total - altValue) / total * 100;
-            ViewBag.chartRates = chartRates;
-            ViewBag.chartDates = chartDates;
+            ViewBag.total = tempTotalUSD;
+            ViewBag.daychange = 20;
+            ViewBag.chartDates = chartDates.Skip(1).ToArray();
+            ViewBag.chartRatesUSD = chartRatesUSD.Skip(1).ToArray();
+            ViewBag.chartRatesBTC = chartRatesBTC.Skip(1).ToArray();
             return View();
         }
 

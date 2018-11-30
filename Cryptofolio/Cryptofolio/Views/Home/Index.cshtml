@@ -8,14 +8,14 @@
     var count = (Double)ViewBag.count;
     var total = (Double)ViewBag.total;
     var daychange = (Double)ViewBag.daychange;
-    var dates = ViewBag.chartDates as List<String>;
-    var rates = ViewBag.chartRates as List<String>;
+
+
 }
 
 
 <div class="text-center"><h1 class="title">Cryptofolio</h1></div>
 <div class="card">
-    <div class="card-body">
+    <div class="card-header">
         <div class="row text-center">
             <div class="col-md-4">
                 <p class="card-text">
@@ -25,7 +25,7 @@
             </div>
             <div class="col-md-4">
                 <p class="card-text">
-                    Total Value of All Portfolios
+                    Total of Portfolios
                     <h1>$@total.ToString("0.00")</h1>
                 </p>
             </div>
@@ -48,19 +48,52 @@
         </div>
     </div>
     <div class="card-body text-center">
-        <div class="row">
-            <div class="col-md-2"></div>
-            <div class="col-md-8">
+        <div class="row ">
+            <div class="col-lg-10 chart-col">
                 <div class="card">
                     <div class="card-body">
-                        <canvas id="myChart" width="400" height="400"></canvas>
+                        <div class="chart-left" style="position:relative;">
+                            <canvas id="myChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-2"></div>
+            <div class="col-lg-2">
+                <div class="row">
+                    <div class="col-lg-2">
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="card ">
+                            <div class="card-body chart-row">
+                                <div class=" text-center chart-col-area chart-col">
+                                    <h5>Data Type</h5>
+                                    <a id="btnusd" class="btn btn-sm btn-success chart-col-btn" onclick="setDataType(1)" href="#">USD</a>
+                                    <a id="btnbtc" class="btn btn-sm btn-secondary chart-col-btn" onclick="setDataType(2)" href="#">BTC</a>
+                                    <a id="btnpercent" class="btn btn-sm btn-secondary chart-col-btn" onclick="setDataType(3)" href="#">%</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card ">
+                            <div class="card-body chart-row">
+                                <div class=" text-center chart-col-area chart-col">
+                                    <h5>Date Range</h5>
+                                    <a id="btn3" class="btn btn-sm btn-success chart-col-btn" onclick="setDateRange(3)" href="#">3D</a>
+                                    <a id="btn7" class="btn btn-sm btn-secondary chart-col-btn" onclick="setDateRange(7)" href="#">7D</a>
+                                    <a id="btn14" class="btn btn-sm btn-secondary chart-col-btn" onclick="setDateRange(14)" href="#">14D</a>
+                                    <a id="btn30" class="btn btn-sm btn-secondary chart-col-btn" onclick="setDateRange(30)" href="#">30D</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <input id="daterange" value="30" hidden />
+                        <input id="dataselected" value="1" hidden />
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="card-body">
+    <div class="card-footer">
         @if (SignInManager.IsSignedIn(User))
         {
             <div class="row text-center">
@@ -87,32 +120,109 @@
 </div>
 
 <script>
-    var ctx = document.getElementById("myChart").getContext('2d');
-    var myLineChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [@foreach (String d in dates) { @d; }],
-            datasets: [{
-                    label: 'Market Rates',
-                data: [@foreach (String r in rates) { @r; }],
-                borderColor: [
-                    'rgba(255,15,22,1)'
-                ],
-                backgroundColor: [
-                    'rgba(255,15,22,0.2)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            }
-        }
-    });
 
+
+    updateChart(30, 1);
+
+
+    function setDateRange(value) {
+        $('#daterange').val(value);
+        var dataSelected = $('#dataselected').val();
+        updateChart(value, dataSelected);
+
+        if (value == 3) {
+            $('#btn3').removeClass("btn-secondary").addClass("btn-success");
+            $('#btn7').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn14').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn30').removeClass("btn-success").addClass("btn-secondary");
+        } else if (value == 7) {
+            $('#btn3').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn7').removeClass("btn-secondary").addClass("btn-success");
+            $('#btn14').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn30').removeClass("btn-success").addClass("btn-secondary");
+        } else if (value == 14) {
+            $('#btn3').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn7').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn14').removeClass("btn-secondary").addClass("btn-success");
+            $('#btn30').removeClass("btn-success").addClass("btn-secondary");
+        }
+        else if (value == 30) {
+            $('#btn3').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn7').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn14').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn30').removeClass("btn-secondary").addClass("btn-success");
+        }
+    }
+
+    function setDataType(value) {
+        $('#dataselected').val(value);
+        var dateRange = $('#daterange').val();
+        updateChart(dateRange, value);
+        if (value == 1) {
+            $('#btnpercent').removeClass("btn-success").addClass("btn-secondary");
+            $('#btnbtc').removeClass("btn-success").addClass("btn-secondary");
+            $('#btnusd').removeClass("btn-secondary").addClass("btn-success");
+        } else if (value == 2) {
+            $('#btnusd').removeClass("btn-success").addClass("btn-secondary");
+            $('#btcpercent').removeClass("btn-success").addClass("btn-secondary");
+            $('#btnbtc').removeClass("btn-secondary").addClass("btn-success");
+        } else if (value == 3) {
+            $('#btnusd').removeClass("btn-success").addClass("btn-secondary");
+            $('#btnbtc').removeClass("btn-success").addClass("btn-secondary");
+            $('#btnpercent').removeClass("btn-secondary").addClass("btn-success");
+        }
+    }
+
+    function updateChart(dateRangeSelected, dataSelected) {
+
+        if (dataSelected == 1) {
+            var dataArray = @Html.Raw(Json.Serialize(ViewBag.chartRatesUSD));
+        } else if(dataSelected == 2){
+            var dataArray = @Html.Raw(Json.Serialize(ViewBag.chartRatesBTC));
+        } else {
+             var dataArray = @Html.Raw(Json.Serialize(ViewBag.chartRatesPercent));
+        }
+        var dateArray = @Html.Raw(Json.Serialize(ViewBag.chartDates));
+        var data = [];
+        var dates = [];
+        for (var i = 0; i < dateRangeSelected; i++) {
+           data.push(parseFloat(dataArray[i]).toFixed(2));
+        }
+
+
+        for (var i = 0; i < dateRangeSelected; i++) {
+           dates.push(dateArray[i]);
+        }
+
+
+        var ctx = document.getElementById("myChart").getContext('2d');
+        var myLineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Market',
+                    data: data,
+                    borderColor: [
+                        'rgba(255,15,22,1)'
+                    ],
+                    backgroundColor: [
+                        'rgba(255,15,22,0.2)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            responsive: true,
+
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: false
+                        }
+                    }]
+                }
+            }
+        });
+    }
 </script>
