@@ -4,14 +4,16 @@ using Cryptofolio.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Cryptofolio.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181130035010_more-comments")]
+    partial class morecomments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,8 +32,7 @@ namespace Cryptofolio.Data.Migrations
                     b.Property<string>("Code")
                         .IsRequired();
 
-                    b.Property<string>("Name")
-                        .HasMaxLength(30);
+                    b.Property<string>("Name");
 
                     b.HasKey("ID");
 
@@ -46,8 +47,7 @@ namespace Cryptofolio.Data.Migrations
 
                     b.Property<DateTime>("Creation_Date");
 
-                    b.Property<string>("Message")
-                        .HasMaxLength(1000);
+                    b.Property<string>("Message");
 
                     b.Property<string>("OwnerID");
 
@@ -122,8 +122,7 @@ namespace Cryptofolio.Data.Migrations
                     b.Property<double>("Daily_Change");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100);
+                        .IsRequired();
 
                     b.Property<string>("OwnerID");
 

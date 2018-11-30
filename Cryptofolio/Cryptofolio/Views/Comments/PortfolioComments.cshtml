@@ -1,0 +1,101 @@
+﻿@model IEnumerable<Cryptofolio.Models.Comment>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "Portfolio Comments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            @if (User.IsInRole("Admin"))
+            {
+            <div class="card-header text-center">
+                <h3>All Comments by Portfolio <span class="badge badge-secondary badge-pill"> @Model.Count()</span></h3>
+            </div>
+            <div class="card-header text-center">
+                <a asp-action="OwnerComments" class="btn btn-success card-link">Comments by Date</a>
+            </div>
+            }
+            else
+            {
+            <div class="card-header text-center">
+                <h3>Portfolio Comments <span class="badge badge-secondary badge-pill"> @Model.Count()</span></h3>
+            </div>
+            <div class="card-header text-center">
+                <a asp-action="OwnerComments" class="btn btn-success card-link">View Your Comments</a>
+            </div>
+            }
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    @if (@Model.Count() > 0)
+                    {
+                    @foreach (var c in Model)
+                        {
+                    <li class="list-group-item">
+                        <div class="card">
+                            <div class="card-body" id="view_@c.ID">
+                                <a asp-controller="Portfolios" asp-action="Details" asp-route-id="@c.Portfolio_ID" class="card-link">
+                                    <h5>@c.Portfolio_Name</h5>
+                                </a>
+                                <h4>"@c.Message"</h4>
+                                <h6>@c.Creation_Date by <span class="badge badge-info badge-user">@c.OwnerID</span></h6>
+                            </div>
+                            <div class="card-body" id="edit_@c.ID" style="display:none">
+                                <partial name="_EditCommentPartial" model='c' />
+                            </div>
+                            <div class="card-body" id="delete_@c.ID" style="display:none">
+                                <partial name="_DeleteCommentPartial" model='c' />
+                            </div>
+                            @if ((@UserManager.GetUserName(User) == c.OwnerID) || (User.IsInRole("Admin")))
+                                    {
+                            <div class="card-footer">
+                                <button onclick="canceledit(@c.ID)" style="display:none" id="cancel_@c.ID" class="btn btn-sm btn-primary">Cancel</button>
+                                <button onclick="editcomment(@c.ID)" id="editbtn_@c.ID" class="btn btn-sm btn-primary card-link">Edit</button>
+                                <button onclick="deletecomment(@c.ID)" id="delete_@c.ID" class="btn btn-sm btn-danger card-link">Delete</button>
+                            </div>
+                                    }
+                        </div>
+                    </li>
+                        }
+                    }
+                    else
+                    {
+                    <li class="list-group-item text-center">
+                        <h5>You don't have any comments yet.</h5>
+                    </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function editcomment(value) {
+        $('#view_' + value).hide();
+        $('#editbtn_' + value).hide();
+        $('#delete_' + value).hide();
+        $('#edit_' + value).show();
+        $('#cancel_' + value).show();
+    }
+
+    function canceledit(value) {
+        $('#edit_' + value).hide();
+        $('#delete_' + value).hide();
+        $('#cancel_' + value).hide();
+        $('#view_' + value).show();
+        $('#editbtn_' + value).show();
+    }
+
+    function deletecomment(value) {
+        $('#view_' + value).hide();
+        $('#editbtn_' + value).hide();
+        $('#edit_' + value).hide();
+        $('#cancel_' + value).show();
+        $('#delete_' + value).show();
+    }
+
+</script>

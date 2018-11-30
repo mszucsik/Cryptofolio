@@ -15,8 +15,11 @@ namespace Cryptofolio.Models
 
         public int Portfolio_ID { get; set; }
 
+        public virtual string Portfolio_Name { get; set; }
+
         public DateTime Creation_Date { get; set; }
 
+        [StringLength(1000)]
         public string Message { get; set; }
     }
 

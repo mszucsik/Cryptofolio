@@ -35,6 +35,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Views\Comments\PortfolioComments.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Comments\_AddCommentPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Comments\_DeleteCommentPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Comments\_EditCommentPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Portfolios\Portfolios.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

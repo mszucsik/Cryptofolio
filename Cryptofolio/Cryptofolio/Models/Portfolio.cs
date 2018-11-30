@@ -15,6 +15,7 @@ namespace Cryptofolio.Models
 
         [Required]
         [Display(Name = "Portfolio Name")]
+        [StringLength(100)]
         public string Name { get; set; }
 
         public int Rating { get; set; }

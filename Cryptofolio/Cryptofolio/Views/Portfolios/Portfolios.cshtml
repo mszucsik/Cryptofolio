@@ -226,7 +226,7 @@
                 <div class="card-footer">
                     @if ((@UserManager.GetUserName(User) == item.OwnerID) || (User.IsInRole("Admin")))
                     {
-                        <a asp-action="Edit" asp-route-id="@item.ID" class="card-link">Make changes</a>
+                        <a asp-action="Edit" asp-route-id="@item.ID" class="card-link">Edit details</a>
                     }
                     <a asp-action="Details" asp-route-id="@item.ID" class="card-link">View portfolio</a>
                     @if ((!(@UserManager.GetUserName(User) == item.OwnerID)) || ((User.IsInRole("Admin"))))

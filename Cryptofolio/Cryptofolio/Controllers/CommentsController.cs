@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Cryptofolio.Data;
 using Cryptofolio.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cryptofolio.Controllers
 {
@@ -20,134 +21,96 @@ namespace Cryptofolio.Controllers
         }
 
         // GET: Comments
-        public async Task<IActionResult> Index()
+        [Authorize]
+        public async Task<IActionResult> OwnerComments()
         {
-            return View(await _context.Comment.ToListAsync());
-        }
-
-        // GET: Comments/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
+            List<Comment> comments = await _context.Comment.ToListAsync();
+            List<Comment> displayComments = new List<Comment>();
+            foreach (Comment comment in comments)
             {
-                return NotFound();
-            }
-
-            var comment = await _context.Comment
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (comment == null)
-            {
-                return NotFound();
-            }
-
-            return View(comment);
-        }
-
-        // GET: Comments/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Comments/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,OwnerID,Portfolio_ID,Creation_Date,Message")] Comment comment)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(comment);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(comment);
-        }
-
-        // GET: Comments/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var comment = await _context.Comment.FindAsync(id);
-            if (comment == null)
-            {
-                return NotFound();
-            }
-            return View(comment);
-        }
-
-        // POST: Comments/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,OwnerID,Portfolio_ID,Creation_Date,Message")] Comment comment)
-        {
-            if (id != comment.ID)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if ((User.Identity.Name == comment.OwnerID) || User.IsInRole("Admin"))
                 {
-                    _context.Update(comment);
-                    await _context.SaveChangesAsync();
+                    Portfolio portfolio = await _context.Portfolio.FirstAsync(o=> o.ID == comment.Portfolio_ID);
+                    comment.Portfolio_Name = portfolio.Name;
+                    displayComments.Add(comment);
                 }
-                catch (DbUpdateConcurrencyException)
+            }
+
+            return View(displayComments);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> PortfolioComments()
+        {
+
+            List<Portfolio> portfolios = await _context.Portfolio.ToListAsync();
+            List<Comment> comments = await _context.Comment.ToListAsync();
+            List<Comment> displayComments = new List<Comment>();
+            foreach (Portfolio portfolio in portfolios)
+            {
+                if (User.Identity.Name == portfolio.OwnerID)
                 {
-                    if (!CommentExists(comment.ID))
+                    foreach (Comment comment in comments)
                     {
-                        return NotFound();
+                        if (portfolio.ID == comment.Portfolio_ID)
+                        {
+                            comment.Portfolio_Name = portfolio.Name;
+                            displayComments.Add(comment);
+                        }
                     }
-                    else
+                } else if (User.IsInRole("Admin"))
+                {
+                    foreach (Comment comment in comments)
+                    {
+                        if (portfolio.ID == comment.Portfolio_ID)
+                        {
+                            comment.Portfolio_Name = portfolio.Name;
+                            displayComments.Add(comment);
+                        }
+                    }
+                }
+            }
+
+            return View(displayComments);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> EditComment(int id, [Bind("ID,Message")] Comment comment)
+        {
+            var editComment = await _context.Comment.FindAsync(comment.ID);
+            editComment.Message = comment.Message;
+            if ((User.Identity.Name == editComment.OwnerID) || User.IsInRole("Admin"))
+            {
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        _context.Update(editComment);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
                     {
                         throw;
+
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(comment);
+            return RedirectToAction(nameof(OwnerComments));
         }
 
-        // GET: Comments/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var comment = await _context.Comment
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (comment == null)
-            {
-                return NotFound();
-            }
-
-            return View(comment);
-        }
-
-        // POST: Comments/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("DeleteComment")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [Authorize]
+        public async Task<IActionResult> DeleteComment([Bind("ID,OwnerID,Portfolio_ID,Creation_Date,Message")] Comment comment)
         {
-            var comment = await _context.Comment.FindAsync(id);
-            _context.Comment.Remove(comment);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool CommentExists(int id)
-        {
-            return _context.Comment.Any(e => e.ID == id);
+            if ((User.Identity.Name == comment.OwnerID) || User.IsInRole("Admin"))
+            {
+                _context.Comment.Remove(comment);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(OwnerComments));
         }
     }
 }

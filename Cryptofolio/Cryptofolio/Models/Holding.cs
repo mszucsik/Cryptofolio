@@ -22,10 +22,12 @@ namespace Cryptofolio.Models
         public string AssetType { get; set; }
 
         [Required]
+        [Range(0, 100000000)]
         public double Amount { get; set; }
 
         [Required]
         [Display(Name = "Purchase Price")]
+        [Range(0, 100000)]
         public double PurchasePrice { get; set; }
     }
 

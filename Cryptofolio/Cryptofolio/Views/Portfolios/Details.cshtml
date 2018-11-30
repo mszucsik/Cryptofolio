@@ -305,12 +305,12 @@
                 </div>
 
                 <li class="list-group-item">
-                    @if ((User.IsInRole("Admin")) || ((User.IsInRole("User")) && (!(@UserManager.GetUserName(User) == Model.OwnerID))))
+                    @if (User.Identity.IsAuthenticated)
                     {
                         <partial name="_AddCommentPartial" model='new Comment { OwnerID = UserManager.GetUserName(User), Portfolio_ID = Model.ID, }' />
 
                     }
-                    else if (@UserManager.GetUserName(User) != Model.OwnerID && !(User.IsInRole("User")))
+                    else
                     {
                         <div class="text-center spaced-out">
                             Sign in to leave a comment

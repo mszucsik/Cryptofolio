@@ -12,6 +12,7 @@ namespace Cryptofolio.Models
         public int ID { get; set; }
 
         [Display(Name = "Display Name")]
+        [StringLength(30)]
         public string Name { get; set; }
 
         [Required]

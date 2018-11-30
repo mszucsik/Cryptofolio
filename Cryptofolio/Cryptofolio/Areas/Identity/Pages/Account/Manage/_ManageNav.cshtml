@@ -12,17 +12,18 @@
         <li class="list-group-item"><a asp-area="" asp-controller="Portfolios" asp-action="Index">All Portfolios</a></li>
         <li class="list-group-item"><a asp-area="" asp-controller="Assets" asp-action="Index">Assets</a></li>
         <li class="list-group-item"><a asp-area="" asp-controller="MarketPrices" asp-action="Index">Market Prices</a></li>
-        <li class="list-group-item"><a asp-area="" asp-controller="Comments" asp-action="Index">Comments</a></li>
-        <li class="list-group-item"><a asp-area="" asp-controller="Ratings" asp-action="Index">Ratings</a></li>
-        <li class="list-group-item"><a asp-area="" asp-controller="Users" asp-action="Index">Users</a></li>
+        <li class="list-group-item"><a asp-area="" asp-controller="Comments" asp-action="OwnerComments">Comments</a></li>
+        <li class="list-group-item"><a asp-area="" asp-controller="Ratings" asp-action="Index">Ratings (TODO)</a></li>
+        <li class="list-group-item"><a asp-area="" asp-controller="Users" asp-action="Index">Users (TODO)</a></li>
     </ul>
     }
     else
     {
-        <ul class="list-group list-group-flush">
-            <li class="list-group-item"><a asp-area="" asp-controller="Portfolios" asp-action="Index">My Portfolios</a></li>
-            <li class="list-group-item"><a asp-area="" asp-controller="Comments" asp-action="Index">My Comments</a></li>
-        </ul>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item"><a asp-area="" asp-controller="Portfolios" asp-action="Index">My Portfolios</a></li>
+        <li class="list-group-item"><a asp-area="" asp-controller="Comments" asp-action="OwnerComments">My Comments</a></li>
+        <li class="list-group-item"><a asp-area="" asp-controller="Comments" asp-action="PortfolioComments">Portfolio Comments</a></li>
+    </ul>
     }
     <div class="card-header">
         Account Settings
