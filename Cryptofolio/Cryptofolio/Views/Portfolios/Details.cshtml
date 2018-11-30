@@ -466,13 +466,13 @@
         updateChart(dateRange, value);
 
         if (value == 1) {
-            $('#btnpercent').removeClass("btn-success").addClass("btn-secondary");
-            $('#btnbtc').removeClass("btn-success").addClass("btn-secondary");
             $('#btnusd').removeClass("btn-secondary").addClass("btn-success");
+            $('#btnbtc').removeClass("btn-success").addClass("btn-secondary");
+            $('#btnpercent').removeClass("btn-success").addClass("btn-secondary");
         } else if (value == 2) {
             $('#btnusd').removeClass("btn-success").addClass("btn-secondary");
-            $('#btcpercent').removeClass("btn-success").addClass("btn-secondary");
             $('#btnbtc').removeClass("btn-secondary").addClass("btn-success");
+            $('#btnpercent').removeClass("btn-success").addClass("btn-secondary");
         } else if (value == 3) {
             $('#btnusd').removeClass("btn-success").addClass("btn-secondary");
             $('#btnbtc').removeClass("btn-success").addClass("btn-secondary");
