@@ -13,10 +13,10 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header text-center">
-                <h3>Add a holding</h3>
+                <h3>Edit @Model.AssetType Holding</h3>
             </div>
             <div class="card-body">
-                <form asp-action="Edit">
+                <form asp-action="EditHolding">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="ID" />
                     <div class="card-body">
@@ -78,10 +78,10 @@
         </div>
     </div>
     <div class="card-body">
-        <a asp-action="Details" asp-route-id="@id" class="card-link">Back to portfolio</a>
+        <a asp-action="Details" asp-route-id="@Model.Portfolio_ID" class="card-link">Back to portfolio</a>
         @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
         {
-            <a asp-action="Delete" asp-route-id="@Model.ID" class="card-link">Delete this portfolio</a>
+            <a asp-action="DeleteHolding" asp-route-id="@Model.ID" class="card-link">Delete this portfolio</a>
         }
     </div>
 </div>

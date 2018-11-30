@@ -527,8 +527,10 @@ namespace Cryptofolio.Controllers
             {
                 return NotFound();
             }
-
-            ViewData["id"] = id;
+            if ((User.Identity.Name == holding.OwnerID) || User.IsInRole("Admin"))
+            {
+                ViewData["id"] = id;
+            }
             return View(holding);
         }
 
@@ -537,18 +539,19 @@ namespace Cryptofolio.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditHolding(int id, [Bind("ID,OwnerID,Creation_Date,Amount")] Holding holding)
+        public async Task<IActionResult> EditHolding(int id, [Bind("ID", "Amount")] Holding holding)
         {
             if (id != holding.ID)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            var editHolding = await _context.Holding.FindAsync(holding.ID);
+            editHolding.Amount = holding.Amount;
+            if ((User.Identity.Name == editHolding.OwnerID) || User.IsInRole("Admin"))
             {
                 try
                 {
-                    _context.Update(holding);
+                    _context.Update(editHolding);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -562,9 +565,8 @@ namespace Cryptofolio.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(holding);
+            return RedirectToAction("Details", new { id = editHolding.Portfolio_ID });
         }
 
         // GET: Holdings/Delete/5
@@ -595,7 +597,7 @@ namespace Cryptofolio.Controllers
             var holding = await _context.Holding.FindAsync(id);
             _context.Holding.Remove(holding);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", new { id = holding.Portfolio_ID });
         }
 
         private bool HoldingExists(int id)
