@@ -264,6 +264,60 @@ namespace Cryptofolio.Controllers
                     totalPurchased += h.PurchasePrice * h.Amount;
                 }
 
+
+                MarketPrice latestPrice = await _context.MarketPrice.OrderByDescending(o => o.TimeStamp).FirstAsync();
+                List<MarketPrice> prices = await _context.MarketPrice.OrderBy(o => o.TimeStamp).ToListAsync();
+                DateTime temp = latestPrice.TimeStamp.AddDays(-30);
+                double tempTotalUSD = 0;
+                double tempTotalBTC = 0;
+                double tempTotalPurchase = 0;
+                double tempPercent = 0;
+                double tempBTC = 0;
+                List<String> chartDates = new List<String>();
+                List<String> chartRatesUSD = new List<String>();
+                List<String> chartRatesBTC = new List<String>();
+                List<String> chartRatesPercent = new List<String>();
+                foreach (MarketPrice m in prices)
+                {
+                    if (m.MarketCurrency == "BTC")
+                    {
+                        tempBTC = m.CurrentPrice;
+                    }
+                    if (temp < m.TimeStamp)
+                    {
+                        temp = m.TimeStamp;
+                        chartDates.Add(temp.ToShortDateString());
+                        chartRatesUSD.Add(tempTotalUSD.ToString());
+                        chartRatesBTC.Add(tempTotalBTC.ToString());
+                        tempPercent = tempTotalUSD / tempTotalPurchase * 100;
+                        chartRatesPercent.Add(tempPercent.ToString());
+                        tempTotalUSD = 0;
+                        tempTotalBTC = 0;
+                        tempTotalPurchase = 0;
+                        tempPercent = 0;
+                    }
+                    foreach (Holding h in displayHoldings)
+                    {
+                        if (m.MarketCurrency == h.AssetType)
+                        {
+                            tempTotalUSD += h.Amount * m.CurrentPrice;
+                            tempTotalBTC += h.Amount * m.CurrentPrice / tempBTC;
+                            tempTotalPurchase += h.Amount * h.PurchasePrice;
+                        }
+                    }
+                }
+                chartDates.Add(temp.ToShortDateString());
+                chartRatesUSD.Add(tempTotalUSD.ToString());
+                chartRatesBTC.Add(tempTotalBTC.ToString());
+                tempPercent = tempTotalUSD / tempTotalPurchase * 100;
+                chartRatesPercent.Add(tempPercent.ToString());
+
+                ViewBag.chartDates = chartDates.Skip(1).ToArray();
+                ViewBag.chartRatesUSD = chartRatesUSD.Skip(1).ToArray();
+                ViewBag.chartRatesPercent = chartRatesPercent.Skip(1).ToArray();
+                ViewBag.chartRatesBTC = chartRatesBTC.Skip(1).ToArray();
+
+
                 totalChange = totalUSD - totalPurchased;
                 percentChange = ((totalUSD / totalPurchased) - 1) * 100;
                 dailyChange = (totalUSD - oldTotal) / totalUSD * 100;

@@ -175,92 +175,138 @@
                     </div>
                 </div>
             </div>
+
+            <div class="card-body text-center">
+                <div class="row ">
+                    <div class="col-lg-10 chart-col">
+                        <div class="card">
+                            <div class="card-body">
+                                <div id="chart" class="chart-left" style="position:relative;">
+                                    <canvas id="datachart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="row">
+                            <div class="col-lg-2">
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="card ">
+                                    <div class="card-body chart-row">
+                                        <div class=" text-center chart-col-area chart-col">
+                                            <h5>Data Type</h5>
+                                            <a id="btnusd" class="btn btn-sm btn-success chart-col-btn" onclick="setDataType(1)" href="#">USD</a>
+                                            <a id="btnbtc" class="btn btn-sm btn-secondary chart-col-btn" onclick="setDataType(2)" href="#">BTC</a>
+                                            <a id="btnpercent" class="btn btn-sm btn-secondary chart-col-btn" onclick="setDataType(3)" href="#">%</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card ">
+                                    <div class="card-body chart-row">
+                                        <div class=" text-center chart-col-area chart-col">
+                                            <h5>Date Range</h5>
+                                            <a id="btn3" class="btn btn-sm btn-success chart-col-btn" onclick="setDateRange(3)" href="#">3D</a>
+                                            <a id="btn7" class="btn btn-sm btn-secondary chart-col-btn" onclick="setDateRange(7)" href="#">7D</a>
+                                            <a id="btn14" class="btn btn-sm btn-secondary chart-col-btn" onclick="setDateRange(14)" href="#">14D</a>
+                                            <a id="btn30" class="btn btn-sm btn-secondary chart-col-btn" onclick="setDateRange(30)" href="#">30D</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-2">
+                                <input id="daterange" value="30" hidden />
+                                <input id="dataselected" value="1" hidden />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="card-footer text-center">
                 <h4>Holdings <span class="badge badge-pill badge-secondary"</span>@Model.Holdings.Count</h4>
             </div>
             <ul class="list-group list-group-flush">
                 @if (Model.Holdings.Count > 0)
                 {
-                        <div id="holdings-table">
-                            <table id="holdings" class="table table-striped table-bordered no-margin" style="width:100%">
-                                <thead>
+                    <li class="list-group-item">
+
+                        <table id="holdings" class="table table-striped table-bordered no-margin" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Asset Type</th>
+                                    <th>24 Hour Change</th>
+                                    <th>Amount</th>
+                                    <th>Current Price</th>
+                                    <th>Purchase Price</th>
+                                    <th>Overall Change</th>
+                                    @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
+                                    {
+                                        <th>Options</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Holdings)
+                                {
+                                    var dailychange = 0.00;
+                                    MarketPrice priceContext = new MarketPrice();
+
+                                    @foreach (var p in prices)
+                                    {
+                                        if (@item.AssetType == p.MarketCurrency)
+                                        {
+                                            priceContext = p;
+                                        }
+                                    }
+
+                                    @foreach (var d in dayOldPrices)
+                                    {
+                                        if (priceContext.MarketCurrency == d.MarketCurrency)
+                                        {
+                                            dailychange = (priceContext.CurrentPrice - d.CurrentPrice) / priceContext.CurrentPrice * 100;
+                                        }
+                                    }
+
+                                    var overall = (priceContext.CurrentPrice - item.PurchasePrice) / item.PurchasePrice * 100;
+
                                     <tr>
-                                        <th>Asset Type</th>
-                                        <th>24 Hour Change</th>
-                                        <th>Amount</th>
-                                        <th>Current Price</th>
-                                        <th>Purchase Price</th>
-                                        <th>Overall Change</th>
+                                        <td>@item.AssetType</td>
+                                        <td>
+                                            @if (dailychange > 0)
+                                            {
+                                                <span class="text-success">+@dailychange.ToString("0.00")%</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-danger">@dailychange.ToString("0.00")%</span>
+                                            }
+                                        </td>
+                                        <td>@item.Amount</td>
+                                        <td>$@priceContext.CurrentPrice.ToString("0.00")</td>
+                                        <td>$@item.PurchasePrice.ToString("0.00")</td>
+                                        <td>
+                                            @if (overall > 0)
+                                            {
+                                                <span class="text-success">+@overall.ToString("0.00")%</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-danger">@overall.ToString("0.00")%</span>
+                                            }
+                                        </td>
+
                                         @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
                                         {
-                                            <th>Options</th>
+                                            <td class="text-center">
+                                                <a asp-action="EditHolding" asp-route-id="@item.ID" class="btn btn-sm btn-primary card-link holding-btn">Edit</a>
+                                                <a asp-action="DeleteHolding" asp-route-id="@item.ID" class="btn btn-sm btn-danger card-link holding-btn">Delete</a>
+                                            </td>
                                         }
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.Holdings)
-                                    {
-                                        var dailychange = 0.00;
-                                        MarketPrice priceContext = new MarketPrice();
-
-                                        @foreach (var p in prices)
-                                        {
-                                            if (@item.AssetType == p.MarketCurrency)
-                                            {
-                                                priceContext = p;
-                                            }
-                                        }
-
-                                        @foreach (var d in dayOldPrices)
-                                        {
-                                            if (priceContext.MarketCurrency == d.MarketCurrency)
-                                            {
-                                                dailychange = (priceContext.CurrentPrice - d.CurrentPrice) / priceContext.CurrentPrice * 100;
-                                            }
-                                        }
-
-                                        var overall = (priceContext.CurrentPrice - item.PurchasePrice) / item.PurchasePrice * 100;
-
-                                        <tr>
-                                            <td>@item.AssetType</td>
-                                            <td>
-                                                @if (dailychange > 0)
-                                                {
-                                                    <span class="text-success">+@dailychange.ToString("0.00")%</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-danger">@dailychange.ToString("0.00")%</span>
-                                                }
-                                            </td>
-                                            <td>@item.Amount</td>
-                                            <td>$@priceContext.CurrentPrice.ToString("0.00")</td>
-                                            <td>$@item.PurchasePrice.ToString("0.00")</td>
-                                            <td>
-                                                @if (overall > 0)
-                                                {
-                                                    <span class="text-success">+@overall.ToString("0.00")%</span>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-danger">@overall.ToString("0.00")%</span>
-                                                }
-                                            </td>
-
-                                            @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
-                                            {
-                                                <td class="text-center">
-                                                    <a asp-action="EditHolding" asp-route-id="@item.ID" class="btn btn-sm btn-primary card-link holding-btn">Edit</a>
-                                                    <a asp-action="DeleteHolding" asp-route-id="@item.ID" class="btn btn-sm btn-danger card-link holding-btn">Delete</a>
-                                                </td>
-                                            }
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-              
-
+                                }
+                            </tbody>
+                        </table>
+                    </li>
                 }
                 else
                 {
@@ -350,12 +396,16 @@
     </div>
 </div>
 
-<script>
-    $(document).ready(function () {
-        $('#holdings-table').DataTable({
-            "paging": true
+
+@section scripts
+    {
+    <script>
+        $(document).ready(function () {
+            updateChart(30, 1);
+            $('#holdings').DataTable({
+                "paging": true
+            });
         });
-    });
 
     function editcomment(value) {
         $('#view_' + value).hide();
@@ -381,4 +431,108 @@
         $('#delete_' + value).show();
     }
 
-</script>
+    function setDateRange(value) {
+        $('#daterange').val(value);
+        var dataSelected = $('#dataselected').val();
+        updateChart(value, dataSelected);
+
+        if (value == 3) {
+            $('#btn3').removeClass("btn-secondary").addClass("btn-success");
+            $('#btn7').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn14').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn30').removeClass("btn-success").addClass("btn-secondary");
+        } else if (value == 7) {
+            $('#btn3').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn7').removeClass("btn-secondary").addClass("btn-success");
+            $('#btn14').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn30').removeClass("btn-success").addClass("btn-secondary");
+        } else if (value == 14) {
+            $('#btn3').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn7').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn14').removeClass("btn-secondary").addClass("btn-success");
+            $('#btn30').removeClass("btn-success").addClass("btn-secondary");
+        }
+        else if (value == 30) {
+            $('#btn3').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn7').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn14').removeClass("btn-success").addClass("btn-secondary");
+            $('#btn30').removeClass("btn-secondary").addClass("btn-success");
+        }
+    }
+
+    function setDataType(value) {
+        $('#dataselected').val(value);
+        var dateRange = $('#daterange').val();
+        updateChart(dateRange, value);
+
+        if (value == 1) {
+            $('#btnpercent').removeClass("btn-success").addClass("btn-secondary");
+            $('#btnbtc').removeClass("btn-success").addClass("btn-secondary");
+            $('#btnusd').removeClass("btn-secondary").addClass("btn-success");
+        } else if (value == 2) {
+            $('#btnusd').removeClass("btn-success").addClass("btn-secondary");
+            $('#btcpercent').removeClass("btn-success").addClass("btn-secondary");
+            $('#btnbtc').removeClass("btn-secondary").addClass("btn-success");
+        } else if (value == 3) {
+            $('#btnusd').removeClass("btn-success").addClass("btn-secondary");
+            $('#btnbtc').removeClass("btn-success").addClass("btn-secondary");
+            $('#btnpercent').removeClass("btn-secondary").addClass("btn-success");
+        }
+    }
+
+    function updateChart(dateRangeSelected, dataSelected) {
+
+        if (dataSelected == 1) {
+            var dataArray = @Html.Raw(Json.Serialize(ViewBag.chartRatesUSD));
+        } else if(dataSelected == 2){
+            var dataArray = @Html.Raw(Json.Serialize(ViewBag.chartRatesBTC));
+        } else if (dataSelected == 3) {
+             var dataArray = @Html.Raw(Json.Serialize(ViewBag.chartRatesPercent));
+        }
+        var dateArray = @Html.Raw(Json.Serialize(ViewBag.chartDates));
+        var data = [];
+        var dates = [];
+        for (var i = 0; i < dateRangeSelected; i++) {
+           data.push(parseFloat(dataArray[i]).toFixed(2));
+        }
+
+
+        for (var i = 0; i < dateRangeSelected; i++) {
+           dates.push(dateArray[i]);
+        }
+
+        $('#chart').empty();
+        $('#chart').html('<canvas id="datachart"></canvas>');
+
+        var ctx = document.getElementById("datachart").getContext('2d');
+        var myLineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Market',
+                    data: data,
+                    borderColor: [
+                        'rgba(255,15,22,1)'
+                    ],
+                    backgroundColor: [
+                        'rgba(255,15,22,0.2)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            responsive: true,
+
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: false
+                        }
+                    }]
+                }
+            }
+        });
+    }
+    </script>
+}

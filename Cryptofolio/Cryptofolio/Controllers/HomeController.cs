@@ -23,11 +23,12 @@ namespace Cryptofolio.Controllers
         public async Task<IActionResult> Index()
         {
             List<Portfolio> portfolios = await _context.Portfolio.ToListAsync();
+            MarketPrice latestPrice = await _context.MarketPrice.OrderByDescending(o => o.TimeStamp).FirstAsync();
             List<MarketPrice> marketPrices = await _context.MarketPrice.OrderBy(o => o.TimeStamp).ToListAsync();
 
 
             List<Holding> holdings = await _context.Holding.ToListAsync();
-            DateTime temp = DateTime.Now.AddDays(-33);
+            DateTime temp = latestPrice.TimeStamp.AddDays(-30);
             double tempTotalUSD = 0;
             double tempTotalBTC = 0;
             double tempTotalPurchase = 0;
