@@ -1,4 +1,14 @@
-﻿using System;
+﻿/*
+ *  Cryptofolio
+ *  Version 1.0 (November 30, 2018)
+ *  by Michael Szucsik
+ *  
+ *  I, Michael Szucsik, 000286230, certify that this is my original work.
+ *  No other persons work was used without due acknowledgement.
+ *  
+ */
+
+ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +31,13 @@ namespace Cryptofolio.Controllers
             _context = context;
         }
 
-        // GET: MarketPrices
+        // GET: Index
+        /// <summary>
+        /// A list of all ratings
+        /// </summary>
+        /// <remarks>The admin can view ratings given by users</remarks>
+        /// <returns>Returns a list of Ratings</returns>
+        /// 
         public async Task<IActionResult> Index()
         {
             var ratings = await _context.Rating.OrderBy(o => o.Creation_Date).ToListAsync();
@@ -35,9 +51,5 @@ namespace Cryptofolio.Controllers
             return View(ratings);
         }
 
-        private bool MarketPriceExists(int id)
-        {
-            return _context.Rating.Any(e => e.ID == id);
-        }
     }
 }

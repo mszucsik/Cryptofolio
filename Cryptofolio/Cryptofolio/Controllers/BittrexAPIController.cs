@@ -1,4 +1,14 @@
-﻿using System;
+﻿/*
+ *  Cryptofolio
+ *  Version 1.0 (November 30, 2018)
+ *  by Michael Szucsik
+ *  
+ *  I, Michael Szucsik, 000286230, certify that this is my original work.
+ *  No other persons work was used without due acknowledgement.
+ *  
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,9 +20,11 @@ using Cryptofolio.Models;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
 using System.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Cryptofolio.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class BittrexAPIController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,7 +34,16 @@ namespace Cryptofolio.Controllers
             _context = context;
         }
 
-        // GET: MarketPrices
+        // GET: Index
+        /// <summary>
+        /// This method was intended to pull API data to build market prices
+        /// <remark>
+        /// The parsing of the data returned combined with the difficulty of
+        /// running a cronjob on Azure lead me to leave this section out for now.
+        /// </remark>
+        /// </summary>
+        /// <returns>Asset results from Bittrex's API</returns>
+        /// 
         public async Task<IActionResult> Index()
         {
             using (var client = new HttpClient())
@@ -37,11 +58,6 @@ namespace Cryptofolio.Controllers
                     JsonObject parsedData = (JsonObject)JsonObject.Parse(stringResult);
                     JsonArray resultList = new JsonArray(parsedData["result"]);
 
-
-                    
-                    
-
-                    
                     return Ok(new
                     {
                         stringResult

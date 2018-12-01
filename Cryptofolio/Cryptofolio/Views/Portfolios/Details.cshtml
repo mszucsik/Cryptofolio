@@ -405,12 +405,15 @@
     {
     <script>
         $(document).ready(function () {
+            // Load the chart initially with 30 days and set to USD
             updateChart(30, 1);
+            // Pagination for the datatable
             $('#holdings').DataTable({
                 "paging": true
             });
         });
 
+    // Toggle visibility for editing/viewing comments
     function editcomment(value) {
         $('#view_' + value).hide();
         $('#editbtn_' + value).hide();
@@ -419,14 +422,16 @@
         $('#cancel_' + value).show();
     }
 
+    // Toggle visibility for editing/viewing comments
     function canceledit(value) {
         $('#edit_' + value).hide();
         $('#delete_' + value).hide();
         $('#cancel_' + value).hide();
         $('#view_' + value).show();
         $('#editbtn_' + value).show();
-    }
+        }
 
+    // Toggle visibility for editing/viewing comments
     function deletecomment(value) {
         $('#view_' + value).hide();
         $('#editbtn_' + value).hide();
@@ -435,9 +440,11 @@
         $('#delete_' + value).show();
     }
 
+    // Accept the users selection for a modify the data displayed by the chart
     function setDateRange(value) {
         $('#daterange').val(value);
         var dataSelected = $('#dataselected').val();
+        // Sets the new chart with the data chosen
         updateChart(value, dataSelected);
 
         if (value == 3) {
@@ -464,9 +471,11 @@
         }
     }
 
+    // Accept the users selection for a modify the date range dispalyed by the chart
     function setDataType(value) {
         $('#dataselected').val(value);
         var dateRange = $('#daterange').val();
+        // Updates the chart with the new date range
         updateChart(dateRange, value);
 
         if (value == 1) {
@@ -484,13 +493,14 @@
         }
     }
 
+    // Runs to update the chart based on the users current selections
     function updateChart(dateRangeSelected, dataSelected) {
-
-        if (dataSelected == 1) {
+        
+        if (dataSelected == 1) {// USD
             var dataArray = @Html.Raw(Json.Serialize(ViewBag.chartRatesUSD));
-        } else if(dataSelected == 2){
+        } else if (dataSelected == 2) {// BTC
             var dataArray = @Html.Raw(Json.Serialize(ViewBag.chartRatesBTC));
-        } else if (dataSelected == 3) {
+        } else if (dataSelected == 3) {// Percent
              var dataArray = @Html.Raw(Json.Serialize(ViewBag.chartRatesPercent));
         }
         var dateArray = @Html.Raw(Json.Serialize(ViewBag.chartDates));
@@ -505,9 +515,11 @@
            dates.push(dateArray[i]);
         }
 
+        // Clear the chart html tags to get a fresh chart area
         $('#chart').empty();
         $('#chart').html('<canvas id="datachart"></canvas>');
 
+        // Create the new chart with the data provided
         var ctx = document.getElementById("datachart").getContext('2d');
         var myLineChart = new Chart(ctx, {
             type: 'line',

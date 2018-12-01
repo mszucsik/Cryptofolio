@@ -1,4 +1,14 @@
-﻿using System;
+﻿/*
+ *  Cryptofolio
+ *  Version 1.0 (November 30, 2018)
+ *  by Michael Szucsik
+ *  
+ *  I, Michael Szucsik, 000286230, certify that this is my original work.
+ *  No other persons work was used without due acknowledgement.
+ *  
+ */
+
+ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -20,6 +30,13 @@ namespace Cryptofolio.Controllers
             _context = context;
         }
 
+        // GET: Index
+        /// <summary>
+        /// The homepage of the app, various major statistics and chart data are shown here
+        /// </summary>
+        /// <remarks>The view bag contains statistics as well as a few charts of global stats of the application</remarks>
+        /// <returns>Returns the index view</returns>
+        /// 
         public async Task<IActionResult> Index()
         {
             List<Portfolio> portfolios = await _context.Portfolio.ToListAsync();

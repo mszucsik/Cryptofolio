@@ -1,4 +1,14 @@
-﻿using System;
+﻿/*
+ *  Cryptofolio
+ *  Version 1.0 (November 30, 2018)
+ *  by Michael Szucsik
+ *  
+ *  I, Michael Szucsik, 000286230, certify that this is my original work.
+ *  No other persons work was used without due acknowledgement.
+ *  
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,7 +30,13 @@ namespace Cryptofolio.Controllers
             _context = context;
         }
 
-        // GET: Comments
+        // GET: OwnerComments
+        /// <summary>
+        /// User: This method gets all of a users self made comments
+        /// Admin: This method gets all comments ordered by date
+        /// </summary>
+        /// <returns>A list of Comments</returns>
+        /// 
         [Authorize]
         public async Task<IActionResult> OwnerComments()
         {
@@ -30,7 +46,7 @@ namespace Cryptofolio.Controllers
             {
                 if ((User.Identity.Name == comment.OwnerID) || User.IsInRole("Admin"))
                 {
-                    Portfolio portfolio = await _context.Portfolio.FirstOrDefaultAsync(o=> o.ID == comment.Portfolio_ID);
+                    Portfolio portfolio = await _context.Portfolio.FirstOrDefaultAsync(o => o.ID == comment.Portfolio_ID);
                     if (portfolio != null)
                     {
                         comment.Portfolio_Name = portfolio.Name;
@@ -42,6 +58,13 @@ namespace Cryptofolio.Controllers
             return View(displayComments);
         }
 
+        // GET: PortfolioComments
+        /// <summary>
+        /// User: This method gets all of comments posted to their own portfolio
+        /// Admin: This method gets all comments ordered by portfolio
+        /// </summary>
+        /// <returns>A list of Comments</returns>
+        /// 
         [Authorize]
         public async Task<IActionResult> PortfolioComments()
         {
@@ -61,7 +84,8 @@ namespace Cryptofolio.Controllers
                             displayComments.Add(comment);
                         }
                     }
-                } else if (User.IsInRole("Admin"))
+                }
+                else if (User.IsInRole("Admin"))
                 {
                     foreach (Comment comment in comments)
                     {
@@ -77,6 +101,11 @@ namespace Cryptofolio.Controllers
             return View(displayComments);
         }
 
+        // POST: EditComment
+        /// <summary>
+        /// This method posts a change to a comment
+        /// </summary>
+        /// 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -103,6 +132,11 @@ namespace Cryptofolio.Controllers
             return RedirectToAction(nameof(OwnerComments));
         }
 
+        // POST: DeleteComment
+        /// <summary>
+        /// This method deletes an existing comment
+        /// </summary>
+        /// 
         [HttpPost, ActionName("DeleteComment")]
         [ValidateAntiForgeryToken]
         [Authorize]

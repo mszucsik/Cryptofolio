@@ -1,7 +1,14 @@
 ﻿@model IEnumerable<Cryptofolio.Models.Portfolio>
 
 @{
-    ViewData["Title"] = "My Portfolios";
+    @if (User.IsInRole("Admin"))
+    {
+        ViewData["Title"] = "All Portfolios";
+    }
+    else
+    {
+        ViewData["Title"] = "My Portfolios";
+    }
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 

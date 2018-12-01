@@ -1,4 +1,14 @@
-﻿using System;
+﻿/*
+ *  Cryptofolio
+ *  Version 1.0 (November 30, 2018)
+ *  by Michael Szucsik
+ *  
+ *  I, Michael Szucsik, 000286230, certify that this is my original work.
+ *  No other persons work was used without due acknowledgement.
+ *  
+ */
+
+ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,15 +31,17 @@ namespace Cryptofolio.Controllers
             _context = context;
         }
 
-        // GET: MarketPrices
+        // GET: Index
+        /// <summary>
+        /// A list of all market prices that have been gathered
+        /// </summary>
+        /// <remarks>The intention of this is to track odd values that may come in through the API
+        /// feeding the database. The admin can check to see what prices may be causing issues</remarks>
+        /// <returns>Returns a list of MarketPrice</returns>
+        /// 
         public async Task<IActionResult> Index()
         {
             return View(await _context.MarketPrice.OrderBy(o=>o.TimeStamp).ToListAsync());
-        }
-
-        private bool MarketPriceExists(int id)
-        {
-            return _context.MarketPrice.Any(e => e.ID == id);
         }
     }
 }

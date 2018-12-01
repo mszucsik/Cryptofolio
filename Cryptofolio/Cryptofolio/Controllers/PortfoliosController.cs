@@ -1,4 +1,14 @@
-﻿using System;
+﻿/*
+ *  Cryptofolio
+ *  Version 1.0 (November 30, 2018)
+ *  by Michael Szucsik
+ *  
+ *  I, Michael Szucsik, 000286230, certify that this is my original work.
+ *  No other persons work was used without due acknowledgement.
+ *  
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +31,14 @@ namespace Cryptofolio.Controllers
             _context = context;
         }
 
-        // GET: Public Portfolios
+        // GET: Portfolios
+        /// <summary>
+        /// The main content of the application
+        /// </summary>
+        /// <remarks>All portfolios are displayed to anonymous, users, and admins.
+        /// Some extra data is also returned in the ViewData in order to produce some statistics for this page</remarks>
+        /// <returns>Returns a list of Portfolios</returns>
+        /// 
         [AllowAnonymous]
         public async Task<IActionResult> Portfolios()
         {
@@ -68,6 +85,12 @@ namespace Cryptofolio.Controllers
         }
 
         // GET: Portfolios
+        /// <summary>
+        /// The Portfolio management page for users and admin
+        /// </summary>
+        /// <remarks>For the admin, this displays every portfolio, for a user, only their own portfolios.</remarks>
+        /// <returns>Returns a list of Portfolios</returns>
+        /// 
         [Authorize]
         public async Task<IActionResult> Index()
         {
@@ -93,6 +116,12 @@ namespace Cryptofolio.Controllers
         }
 
 
+        // GET: getPortfolioStatistics
+        /// <summary>
+        /// A method to gather financial statistics to be displayed for each portfolio
+        /// </summary>
+        /// <returns>Returns a list of Portfolios with virtual data attached</returns>
+        /// 
         public List<Portfolio> getPortfolioStatistics(List<Portfolio> portfolios)
         {
             var query = from m in _context.MarketPrice
@@ -181,7 +210,14 @@ namespace Cryptofolio.Controllers
         }
 
 
-        // GET: Portfolios/Details/5
+        // GET: Details
+        /// <summary>
+        /// The main view of a portfolio, all stats, holdings and more are displayed for any user logged in or not
+        /// </summary>
+        /// <remarks>Several peices of data such as data tables, overall totals, ratings
+        /// and holdings are all given to the view with ViewData</remarks>
+        /// <returns>Returns a portfolio view</returns>
+        /// 
         [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
@@ -365,16 +401,24 @@ namespace Cryptofolio.Controllers
             }
         }
 
-        // GET: Portfolios/Create
+        // GET: Create
+        /// <summary>
+        /// Opens up the create view for portfolio
+        /// </summary>
+        /// <returns>Create view</returns>
+        /// 
         [Authorize]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Portfolios/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // GET: Portfolio/Create
+        /// <summary>
+        /// A create area for users to create new portfolios, only basic details needed
+        /// </summary>
+        /// <returns>Returns a portfolio details view</returns>
+        /// 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -391,12 +435,17 @@ namespace Cryptofolio.Controllers
                 _context.Add(portfolio);
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { id = portfolio.ID });
             }
             return View(portfolio);
         }
 
-        // GET: Portfolios/Edit/5
+        // GET: Portfolio/Edit
+        /// <summary>
+        /// A request for a specific portfolio to edit
+        /// </summary>
+        /// <returns>Returns a portfolio edit view</returns>
+        /// 
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -421,9 +470,12 @@ namespace Cryptofolio.Controllers
             }
         }
 
-        // POST: Portfolios/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Portfolio/Edit
+        /// <summary>
+        /// A section to edit the basic details for a portfolio
+        /// </summary>
+        /// <returns>Returns a portfolio details view</returns>
+        /// 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -466,7 +518,12 @@ namespace Cryptofolio.Controllers
             }
         }
 
-        // GET: Portfolios/Delete/5
+        // GET: Portfolio/Delete
+        /// <summary>
+        /// A request for a portfolio to delete
+        /// </summary>
+        /// <returns>Returns a portfolio delete view</returns>
+        /// 
         [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -499,7 +556,14 @@ namespace Cryptofolio.Controllers
             }
         }
 
-        // POST: Portfolios/Delete/5
+        // POST: Portfolio/Delete
+        /// <summary>
+        /// A delete page for portfolios. This displays information about the portfolio such
+        /// as value and rating to deter the user from deleting.
+        /// </summary>
+        /// <remarks>The portfolio is deleted</remarks>
+        /// <returns>Index of portfolios view is returned</returns>
+        /// 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -518,12 +582,18 @@ namespace Cryptofolio.Controllers
             }
         }
 
+        // Check if a portfolio exists in the DB
         private bool PortfolioExists(int id)
         {
             return _context.Portfolio.Any(e => e.ID == id);
         }
 
-
+        // GET: AddHolding
+        /// <summary>
+        /// Gets details about assets and market rates and displays a list of options for the user to add a holding
+        /// </summary>
+        /// <returns>Add holding view</returns>
+        /// 
         public async Task<IActionResult> AddHolding(int id)
         {
             var portfolio = await _context.Portfolio.FindAsync(id);
@@ -559,9 +629,12 @@ namespace Cryptofolio.Controllers
             }
         }
 
-        // POST: Holdings/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: AddHolding
+        /// <summary>
+        /// Adds a an asset holding to a portfolio
+        /// </summary>
+        /// <returns>Detail view for the portfolio that the holding was added to</returns>
+        /// 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddHolding([Bind("OwnerID,AssetType,PurchasePrice,Creation_Date,Amount")] Holding holding, IFormCollection form)
@@ -574,7 +647,6 @@ namespace Cryptofolio.Controllers
             {
                 if (form["AssetType"] != "Select Asset")
                 {
-
 
                     var user = User.Identity.Name;
                     holding.AssetType = form["AssetType"];
@@ -598,7 +670,12 @@ namespace Cryptofolio.Controllers
 
         }
 
-        // GET: Holdings/Edit/5
+        // GET: EditHolding
+        /// <summary>
+        /// Provides an edit holding page wich displays data for the holding but only allows the amount to be altered
+        /// </summary>
+        /// <returns>Edit holding view</returns>
+        /// 
         public async Task<IActionResult> EditHolding(int? id)
         {
             if (id == null)
@@ -607,20 +684,31 @@ namespace Cryptofolio.Controllers
             }
 
             var holding = await _context.Holding.FindAsync(id);
+            var portfolio = await _context.Portfolio.FirstOrDefaultAsync(m => m.ID == holding.Portfolio_ID);
+
             if (holding == null)
             {
                 return NotFound();
             }
             if ((User.Identity.Name == holding.OwnerID) || User.IsInRole("Admin"))
             {
-                ViewData["id"] = id;
+               
+                ViewData["id"] = portfolio.ID;
+
+                return View(holding);
             }
-            return View(holding);
+            else
+            {
+                return RedirectToAction("Details", new { id = portfolio.ID});
+            }
         }
 
-        // POST: Holdings/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: EditHolding
+        /// <summary>
+        /// Edits the holding
+        /// </summary>
+        /// <returns>Details view of the portfolio that the holding belongs to</returns>
+        /// 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditHolding(int id, [Bind("ID", "Amount")] Holding holding)
@@ -653,7 +741,12 @@ namespace Cryptofolio.Controllers
             return RedirectToAction("Details", new { id = editHolding.Portfolio_ID });
         }
 
-        // GET: Holdings/Delete/5
+        // Get: DeleteHolding
+        /// <summary>
+        /// Gets data for the holding and displays it to the user
+        /// </summary>
+        /// <returns>Delete holding view</returns>
+        /// 
         public async Task<IActionResult> DeleteHolding(int? id)
         {
             if (id == null)
@@ -663,17 +756,31 @@ namespace Cryptofolio.Controllers
 
             var holding = await _context.Holding
                 .FirstOrDefaultAsync(m => m.ID == id);
+
+            var portfolio = await _context.Portfolio.FirstOrDefaultAsync(m => m.ID == holding.Portfolio_ID);
+
             if (holding == null)
             {
                 return NotFound();
             }
+            if ((User.Identity.Name == holding.OwnerID) || User.IsInRole("Admin"))
+            {
+                ViewData["id"] = portfolio.ID;
+                return View(holding);
+            }
+            else
+            {
+                return RedirectToAction("Details", new { id = portfolio.ID });
+            }
 
-            ViewData["id"] = id;
-
-            return View(holding);
         }
 
-        // POST: Holdings/Delete/5
+        // POST: DeleteHolding
+        /// <summary>
+        /// Deletes the holding
+        /// </summary>
+        /// <returns>Details view of the portfolio that the holding belongs to</returns>
+        /// 
         [HttpPost, ActionName("DeleteHolding")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteHoldingConfirmed(int id)
@@ -689,7 +796,12 @@ namespace Cryptofolio.Controllers
             return _context.Holding.Any(e => e.ID == id);
         }
 
-
+        // POST: AddComment
+        /// <summary>
+        /// Allows a user to post a comment from a partial view while viewing a portfolio
+        /// </summary>
+        /// <returns>Details view of the portfolio refreshed</returns>
+        /// 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -706,6 +818,12 @@ namespace Cryptofolio.Controllers
             return RedirectToAction("Details", new { id = comment.Portfolio_ID });
         }
 
+        // POST: EditComment
+        /// <summary>
+        /// Allows a user to modify their comment message
+        /// </summary>
+        /// <returns>Details view of the portfolio refreshed</returns>
+        /// 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -732,6 +850,12 @@ namespace Cryptofolio.Controllers
             return RedirectToAction("Details", new { id = editComment.Portfolio_ID });
         }
 
+        // POST: DeleteComment
+        /// <summary>
+        /// Allows a user to delete their comment message
+        /// </summary>
+        /// <returns>Details view of the portfolio refreshed</returns>
+        /// 
         [HttpPost, ActionName("DeleteComment")]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -745,7 +869,12 @@ namespace Cryptofolio.Controllers
             return RedirectToAction("Details", new { id = comment.Portfolio_ID });
         }
 
-
+        // POST: UpVoteOnDetails
+        /// <summary>
+        /// Allows a user to make a vote on a portfolio, in this case, a postive one
+        /// </summary>
+        /// <returns>Details view of the portfolio refreshed</returns>
+        /// 
         public async Task<IActionResult> UpVoteOnDetails(int id)
         {
 
@@ -758,6 +887,13 @@ namespace Cryptofolio.Controllers
 
         }
 
+        // POST: UpVoteOnList
+        /// <summary>
+        /// Allows a user to make a vote on a portfolio, in this case, a postive one
+        /// This route is for users viewing the portfolio in a list when they rate it
+        /// </summary>
+        /// <returns>Index of public portfolios</returns>
+        /// 
         public async Task<IActionResult> UpVoteOnList(int id)
         {
             var portfolio = await _context.Portfolio.Where(o => o.ID == id).FirstAsync();
@@ -769,6 +905,13 @@ namespace Cryptofolio.Controllers
 
         }
 
+        // POST: DownVoteOnDetails
+        /// <summary>
+        /// Allows a user to make a vote on a portfolio, in this case, a negative one
+        /// This route is for users viewing the portfolio as they rate it
+        /// </summary>
+        /// <returns>Details view of the portfolio refreshed</returns>
+        /// 
         public async Task<IActionResult> DownVoteOnDetails(int id)
         {
 
@@ -781,6 +924,12 @@ namespace Cryptofolio.Controllers
 
         }
 
+        // POST: DownVoteOnList
+        /// <summary>
+        /// Allows a user to make a vote on a portfolio, in this case, a negative one
+        /// </summary>
+        /// <returns>Index of public portfolios</returns>
+        /// 
         public async Task<IActionResult> DownVoteOnList(int id)
         {
             var portfolio = await _context.Portfolio.Where(o => o.ID == id).FirstAsync();
@@ -792,6 +941,13 @@ namespace Cryptofolio.Controllers
 
         }
 
+        // POST: ClearVoteOnDetails
+        /// <summary>
+        /// Allows a user to make a vote on a portfolio, in this case, a neutral one (clear any votes made)
+        /// This route is for users viewing the portfolio as they rate it
+        /// </summary>
+        /// <returns>Details view of the portfolio refreshed</returns>
+        /// 
         public async Task<IActionResult> ClearVoteOnDetails(int id)
         {
 
@@ -804,6 +960,12 @@ namespace Cryptofolio.Controllers
 
         }
 
+        // POST: ClearVoteOnList
+        /// <summary>
+        /// Allows a user to make a vote on a portfolio, in this case, a neutral one (clear any votes made)
+        /// </summary>
+        /// <returns>Index of public portfolios</returns>
+        /// 
         public async Task<IActionResult> ClearVoteOnList(int id)
         {
             var portfolio = await _context.Portfolio.Where(o => o.ID == id).FirstAsync();
@@ -815,6 +977,12 @@ namespace Cryptofolio.Controllers
 
         }
 
+        // setVote
+        /// <summary>
+        /// A method that either creates a new vote for a user for a portfolio, or updates their existing one
+        /// </summary>
+        /// <returns>Nothing, saves changes to DB</returns>
+        /// 
         public async Task setVote([Bind("ID,OwnerID")] Portfolio p, string username, RatingType type)
         {
             if (username != p.OwnerID || User.IsInRole("Admin"))
@@ -833,6 +1001,7 @@ namespace Cryptofolio.Controllers
                 else
                 {
                     rating.Vote = type;
+                    rating.Creation_Date = DateTime.Now;
                     _context.Update(rating);
                 }
 

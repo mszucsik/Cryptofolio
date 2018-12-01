@@ -80,7 +80,8 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 <script type="text/javascript">
-
+    // This function is used to display only the current asset
+    // price of the selected asset, and hide the others
     function updatePriceDisplay(value) {
         $('#assetdetails').show();
         $('#assetdetails').children().hide();
