@@ -3,7 +3,7 @@
 @inject UserManager<IdentityUser> UserManager
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Holding";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -78,7 +78,7 @@
 </div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+
 <script type="text/javascript">
     // This function is used to display only the current asset
     // price of the selected asset, and hide the others
@@ -91,3 +91,4 @@
         }
     }
 </script>
+    }

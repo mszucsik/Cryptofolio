@@ -30,6 +30,10 @@ namespace Cryptofolio.Models
         public string Code { get; set; }
 
         public Boolean Activated { get; set; }
+
+        public virtual double Daily_Change { get; set; }
+
+        public virtual double Current_Price { get; set; }
     }
 }
 

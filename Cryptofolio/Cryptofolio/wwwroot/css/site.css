@@ -99,7 +99,12 @@ h6, h7 {
     color: white;
 }
 .holding-btn {
-    width: 60px;
+    min-width: 60px;
+}
+.asset-btn {
+    min-width: 100px;
+    padding-left: 0;
+    padding-right: 0;
 }
 .spaced-out{
     padding-top: 25px;
