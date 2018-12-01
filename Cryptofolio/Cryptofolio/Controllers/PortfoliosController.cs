@@ -241,7 +241,7 @@ namespace Cryptofolio.Controllers
             {
                 return NotFound();
             }
-            if (portfolio.Privacy_Status == false)
+            if (portfolio.Privacy_Status == false || User.Identity.Name == portfolio.OwnerID || User.IsInRole("Admin"))
             {
                 ViewData["assets"] = await _context.Asset.ToListAsync();
                 List<Holding> holdings = await _context.Holding.ToListAsync();

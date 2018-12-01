@@ -1,0 +1,19 @@
+URL for live project:
+http://cryptofolio.azurewebsites.net/
+
+User
+mike@test.com
+
+Admin
+admin@test.com
+
+Modules used:
+
+Bootstrap 4
+Jquery 3
+ChartJS
+Bootstrap Datatables
+Font Awesome 4
+
+No modifications were made to these modules
+They were just utilized to generate better looking styles.

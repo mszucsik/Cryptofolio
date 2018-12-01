@@ -46,7 +46,7 @@
                 @if ((@UserManager.GetUserName(User) == Model.OwnerID) || (User.IsInRole("Admin")))
                 {
                     <a asp-action="Details" asp-route-id="@Model.ID" class="card-link">Back to @Model.Name</a>
-                    <a asp-action="Details" asp-route-id="@Model.ID" class="card-link">Add holdings</a>
+                    <a asp-action="AddHolding" class="card-link" asp-route-id="@Model.ID">Add holdings</a>
                     <a asp-action="Delete" asp-route-id="@Model.ID" class="card-link">Delete this portfolio</a>
                 }
             </div>
