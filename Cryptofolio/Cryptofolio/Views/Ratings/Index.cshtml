@@ -31,7 +31,7 @@
                             <td>@item.Creation_Date</td>
                             <td>@item.OwnerID</td>
                             <td>
-                                @if (item.Vote == RatingType.Down)
+                                @if (item.Vote == RatingType.Up)
                                 {
                                     <span class="badge badge-sm badge-success"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
                                 }
@@ -39,7 +39,7 @@
                                 {
                                     <span class="badge badge-sm badge-secondary"><i class="fa fa-minus" aria-hidden="true"></i></span>
                                 }
-                                else
+                                else if (item.Vote == RatingType.Down)
                                 {
                                     <span class="badge badge-sm badge-danger"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
                                 }

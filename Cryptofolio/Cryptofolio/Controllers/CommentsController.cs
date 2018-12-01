@@ -30,9 +30,12 @@ namespace Cryptofolio.Controllers
             {
                 if ((User.Identity.Name == comment.OwnerID) || User.IsInRole("Admin"))
                 {
-                    Portfolio portfolio = await _context.Portfolio.FirstAsync(o=> o.ID == comment.Portfolio_ID);
-                    comment.Portfolio_Name = portfolio.Name;
-                    displayComments.Add(comment);
+                    Portfolio portfolio = await _context.Portfolio.FirstOrDefaultAsync(o=> o.ID == comment.Portfolio_ID);
+                    if (portfolio != null)
+                    {
+                        comment.Portfolio_Name = portfolio.Name;
+                        displayComments.Add(comment);
+                    }
                 }
             }
 
